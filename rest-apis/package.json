@@ -1,0 +1,31 @@
+{
+  "name": "rest-apis",
+  "version": "1.0.0",
+  "description": "rest apis to support sapa",
+  "main": "server.js",
+  "scripts": {
+    "test": "cross-env JWT_SECRET=4D82DECF7111F82B7E7EE28664E56 mocha --recursive",
+    "start": "cross-env JWT_SECRET=4D82DECF7111F82B7E7EE28664E56 APP_SALT_ROUNDS=2 node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.4.2",
+    "@elastic/elasticsearch": "^7.5.0",
+    "bcrypt": "^3.0.5",
+    "body-parser": "^1.18.3",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "fs": "0.0.1-security",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mocha": "^6.0.2",
+    "ramda": "^0.26.1",
+    "sqlite3": "^4.0.6"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-core": "^6.26.3"
+  }
+}
