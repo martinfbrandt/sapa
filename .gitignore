@@ -1,1 +1,3 @@
 .vscode
+ui/node_modules/*
+rest-apis/node_modules/*
