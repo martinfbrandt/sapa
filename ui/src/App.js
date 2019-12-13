@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import styled from 'styled-components';
-import ListApp from 'pages/ListApp';
 import SignUp from 'pages/SignUp';
 import Sapa from 'pages/Sapa';
 import 'whatwg-fetch';

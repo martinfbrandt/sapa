@@ -1,6 +1,6 @@
 
 before(() => {
-    cy.login('martinbrandt@gmail.com', 'hahahahaa')
+    cy.login('admin@sapa.com', 'admin')
     cy.visit('http://localhost:3001')
 })
 describe('interaction with list items', () => {
