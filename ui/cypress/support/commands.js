@@ -36,5 +36,8 @@ Cypress.Commands.add("login", async (email, pw) => {
         body: JSON.stringify({email: email, password: pw})
     });
     const userJson = await loggedInUser.json();
+    console.log(sessionStorage)
     sessionStorage.setItem('user', JSON.stringify(userJson));
+    console.log(sessionStorage)
+
 })

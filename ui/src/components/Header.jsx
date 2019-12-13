@@ -39,7 +39,6 @@ class Header extends Component {
   render(){
     const isLoggedIn = sessionStorage.getItem('user') !== null
 
-    console.log(sessionStorage.getItem('user'))
     const {setUserLoggedIn, logout} = this.props;
       return (
               <HeaderContainer>
