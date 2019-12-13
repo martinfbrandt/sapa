@@ -1,5 +1,4 @@
 import React, {Component,} from 'react';
-import Header from 'components/Header';
 import Table from 'components/Table';
 import styled from 'styled-components';
 import {lightGreen} from 'variables';
@@ -28,16 +27,6 @@ const ControlPanel = styled.div`
   align-items: center;
   justify-content: center
 `;
-
-const StyledInput = styled.input`
-    border:none;
-    height:30px;
-    font-size: 14px;
-    margin: 5px;
-    padding:5px;
-    text-align: center;
-    background-color: ${inputGreen}
-`
 
 const initialFilterState = {
     startTime: '00:00:00',
@@ -225,7 +214,6 @@ class Sapa extends Component {
         const dayGroups = groupBy(experience => getDay(prop('created_dt', experience)))(this.filterexperiences(experiences));
         
         return <div>
-                    <Header logout={this.logout} toggleSignUp={this.props.toggleSignUp} setUserLoggedIn={this.setLoggedIn}/>
                     <Body>
                         <h3>User experiences:</h3>
                         <ControlPanel>
