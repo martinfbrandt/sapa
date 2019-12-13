@@ -23,6 +23,7 @@ class Wishlist extends Component {
 
       return (
         <StyledContainer>
+            <h3>Wish List</h3>
             <Table >
                 {
                     <TableItemGroup 
@@ -39,11 +40,9 @@ class Wishlist extends Component {
 }
 
 Wishlist.defaultProps = {
-    experiences: [{
-        
-    }],
     editingItems: [],
     idx: 1,
+    toggleEditing: () => {},
 
     
 }

@@ -1,14 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import Button from "components/Button";
 import { set, equals, lensPath} from "ramda";
 import {lightGreen} from 'variables';
 import moment from 'moment';
 import InlineError from 'components/InlineError';
 
 const Item = styled.div`
-  height: 80px;
-  width: 90%;
+  height: 250px;
+  width: 50%;
   background-color: white;
   margin-top: 5px;
   margin-left: 5px;
@@ -22,6 +21,33 @@ const Item = styled.div`
 const ErrorContainer = styled.div`
   margin-left:10px;
 `
+
+const Left = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-right: 1px black;
+
+`
+
+const Buttons = styled.div`
+ display: flex;
+ flex-direction: column;
+`
+
+const Description = styled.div`
+  width: 150px;
+  padding: 15px;
+  font-weight: 100;
+  font-family: sans-serif;
+  overflow: hidden;
+`
+
+const Picture = styled.img`
+  height: 150px;
+  width: 150px;
+`;
 
 const PropertyContainer = styled.div`
   width: 50%;
@@ -42,15 +68,6 @@ const StyledInput = styled.input`
   border-bottom: 2px solid ${lightGreen};
   font-weight: 500;
   margin-left: 3px;
-`
-
-const StatusIndicator = styled.div`
-  border-radius:50%;
-  width: 12px;
-  height: 12px;
-  border: 1px solid black
-  margin-left:5px;
-  opacity: .85
 `
 
 // Component displays the basic table item where the user adds descriptions and name
@@ -75,31 +92,15 @@ class TableItem extends React.Component {
   render() {
     const {
       id,
-      toggleEditing,
-      saveExperience,
-      updateExperience,
+      children,
       isEditing = false,
     } = this.props;
     const { experience } = this.state;
 
     return (
       <Item key={id} id={id}>
-        <StatusIndicator id={`${id}-status-indicator`}/>
-        <PropertyContainer>
+        <Left>
           <PropertyItem>
-            <label>Description:</label>
-            {isEditing ? (
-              <StyledInput
-                id={`${id}-description-input`}
-                defaultValue={experience.description}
-                onChange={({target}) => this.updateState(target.value, "description")}
-              />
-            ) : (
-              <label>{experience.description}</label>
-            )}
-          </PropertyItem>
-          <PropertyItem>
-            <label>Name:</label>
             {isEditing ? (
               <StyledInput
                 id={`${id}-name-input`}
@@ -107,7 +108,21 @@ class TableItem extends React.Component {
                 onChange={({target}) => this.updateState(parseInt(target.value), "name")}
               />
             ) : (
-              <label>{experience.name}</label>
+              <h4>{experience.name}</h4>
+            )}
+          </PropertyItem>          
+          <Picture src="https://bkkaruncloud.b-cdn.net/wp-content/uploads/2019/01/de-hanoi-a-sapa.jpg"/>
+        </Left>
+        <PropertyContainer>
+          <PropertyItem>
+            {isEditing ? (
+              <StyledInput
+                id={`${id}-description-input`}
+                defaultValue={experience.description}
+                onChange={({target}) => this.updateState(target.value, "description")}
+              />
+            ) : (
+              <Description>{experience.description}</Description>
             )}
           </PropertyItem>
           <PropertyItem>
@@ -117,18 +132,9 @@ class TableItem extends React.Component {
             <label id={`${id}-time-created`}>{`Time Created: ${moment(experience.created_dt, 'YYYY-MM-DD HH:mm:ss').format('HH:mm:ss')}`}</label>
           </PropertyItem>
         </PropertyContainer>  
-        <Button id={`${id}-delete-button`} value="Delete" onClick={() => this.props.deleteExperience(experience)} />
-        {isEditing ? (
-          <>
-            <Button id={`${id}-save-button`} value="Save" onClick={() => {
-                    experience.id ? updateExperience(experience.id, experience) : saveExperience(experience);
-                    toggleEditing(id);
-                }} />
-            <Button id={`${id}-cancel-button`} value="Cancel" onClick={() => toggleEditing(id)} />
-          </>
-        ) : (
-          <Button id={`${id}-edit-button`} value="Edit" onClick={() => toggleEditing(id)} />
-        )}
+        <Buttons>
+        {children}
+        </Buttons>
         <ErrorContainer>          
           <InlineError err={this.state.experience.error}/>
         </ErrorContainer>
@@ -136,5 +142,6 @@ class TableItem extends React.Component {
     );
   }
 }
+
 
 export default TableItem;
