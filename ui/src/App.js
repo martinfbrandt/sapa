@@ -3,6 +3,7 @@ import './App.css';
 import styled from 'styled-components';
 import SignUp from 'pages/SignUp';
 import Sapa from 'pages/Sapa';
+import Wishlist from 'pages/Wishlist';
 import 'whatwg-fetch';
 import Header from 'components/Header';
 import { Router, Link } from "@reach/router";
@@ -15,10 +16,6 @@ const AppContainer = styled.div`
   overflow: hidden;
 `;
 
-const WishList = styled.div`
-  height: 100vh;
-  width: 100vw;
-`
 class App extends Component {
   constructor() {
     super();
@@ -39,7 +36,7 @@ class App extends Component {
           <Router>
             <SignUp path="register" toggleSignUp={this.toggleSignUp}/>
             <Sapa path="search" toggleSignUp={this.toggleSignUp}/>
-            <WishList path="wishlist" />
+            <Wishlist path="wishlist" />
           </Router>
         </AppContainer>
       </div>

@@ -1,14 +1,13 @@
 import React, {Component,} from 'react';
 import Table from 'components/Table';
 import styled from 'styled-components';
-import {lightGreen} from 'variables';
 import {loadUserExperiences, deleteExperience, loadUser, saveNewExperience, updateExperience, updateUser} from 'Api';
 import {append, prepend, without, sort, equals, isEmpty, contains, assoc, filter, complement, concat, set, lensPath, keys, propEq, groupBy, prop} from 'ramda';
 import Button from 'components/Button';
 import TableItemGroup from 'components/TableItemGroup';
 import moment from 'moment';
 import Filter from 'components/Filter';
-import {headerHeight, inputGreen} from 'variables';
+import {headerHeight, lightGreen} from 'variables';
 
 const Body = styled.div`
   background-color: ${lightGreen};

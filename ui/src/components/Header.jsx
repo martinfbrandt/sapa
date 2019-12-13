@@ -53,6 +53,8 @@ class Header extends Component {
                 </StyledLink>
                 <ButtonContainer id='SapaHeader'>
                   {this.state.isLoggingIn && <LoginPopover toggleLogin={this.toggleLogin} setUser={setUserLoggedIn} rootId='SapaHeader'/>}
+                  <Button id="search-button" to="search" inverse value='Search'/>
+                  <Button id="wishlist-button" to="wishlist" inverse value='Wish List'/>
                   <Button id="signup-button" to="register" inverse value='Sign Up'/>
                   {isLoggedIn ? <Button id="logout-button" inverse onClick={logout} value='Logout'/> : <Button id="login-button" inverse onClick={this.toggleLogin} value='Login'/>}
                 </ButtonContainer>
