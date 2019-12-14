@@ -48,7 +48,6 @@ const isExpiredUserErr = err => err.message === 'Expired Token'
 
 const initialState = {
     experiences:[],
-    editingItems: [],
     filter: initialFilterState,
     user: {},
 };
