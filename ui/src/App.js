@@ -3,7 +3,10 @@ import './App.css';
 import styled from 'styled-components';
 import SignUp from 'pages/SignUp';
 import Sapa from 'pages/Sapa';
+import Wishlist from 'pages/Wishlist';
 import 'whatwg-fetch';
+import Header from 'components/Header';
+import { Router, Link } from "@reach/router";
 
 
 
@@ -12,6 +15,7 @@ const AppContainer = styled.div`
   width: 100vw;
   overflow: hidden;
 `;
+
 class App extends Component {
   constructor() {
     super();
@@ -28,7 +32,12 @@ class App extends Component {
     return (
       <div className="App">
         <AppContainer id='appcontainer'>
-         {signUp ?  <SignUp toggleSignUp={this.toggleSignUp}/> : <Sapa toggleSignUp={this.toggleSignUp}/> }
+          <Header logout={this.logout} toggleSignUp={this.props.toggleSignUp} setUserLoggedIn={this.setLoggedIn}/>
+          <Router>
+            <SignUp path="register" toggleSignUp={this.toggleSignUp}/>
+            <Sapa path="search" toggleSignUp={this.toggleSignUp}/>
+            <Wishlist path="wishlist" />
+          </Router>
         </AppContainer>
       </div>
     );

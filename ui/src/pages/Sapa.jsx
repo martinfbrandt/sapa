@@ -1,15 +1,13 @@
 import React, {Component,} from 'react';
-import Header from 'components/Header';
 import Table from 'components/Table';
 import styled from 'styled-components';
-import {lightGreen} from 'variables';
 import {loadUserExperiences, deleteExperience, loadUser, saveNewExperience, updateExperience, updateUser} from 'Api';
 import {append, prepend, without, sort, equals, isEmpty, contains, assoc, filter, complement, concat, set, lensPath, keys, propEq, groupBy, prop} from 'ramda';
 import Button from 'components/Button';
 import TableItemGroup from 'components/TableItemGroup';
 import moment from 'moment';
 import Filter from 'components/Filter';
-import {headerHeight, inputGreen} from 'variables';
+import {headerHeight, lightGreen} from 'variables';
 
 const Body = styled.div`
   background-color: ${lightGreen};
@@ -28,16 +26,6 @@ const ControlPanel = styled.div`
   align-items: center;
   justify-content: center
 `;
-
-const StyledInput = styled.input`
-    border:none;
-    height:30px;
-    font-size: 14px;
-    margin: 5px;
-    padding:5px;
-    text-align: center;
-    background-color: ${inputGreen}
-`
 
 const initialFilterState = {
     startTime: '00:00:00',
@@ -60,7 +48,6 @@ const isExpiredUserErr = err => err.message === 'Expired Token'
 
 const initialState = {
     experiences:[],
-    editingItems: [],
     filter: initialFilterState,
     user: {},
 };
@@ -225,7 +212,6 @@ class Sapa extends Component {
         const dayGroups = groupBy(experience => getDay(prop('created_dt', experience)))(this.filterexperiences(experiences));
         
         return <div>
-                    <Header logout={this.logout} toggleSignUp={this.props.toggleSignUp} setUserLoggedIn={this.setLoggedIn}/>
                     <Body>
                         <h3>User experiences:</h3>
                         <ControlPanel>

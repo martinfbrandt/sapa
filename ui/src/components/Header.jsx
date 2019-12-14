@@ -4,6 +4,7 @@ import {lightGreen} from 'variables';
 import LoginPopover from 'components/LoginPopover';
 import Button from 'components/Button';
 import {headerHeight} from 'variables';
+import {Link} from '@reach/router';
 
 const HeaderContainer = styled.div`
   width: 100%;
@@ -25,6 +26,11 @@ const StyledHeader = styled.h3`
   margin-left:30px;
 `
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: blue;
+`
+
 
 class Header extends Component {
   constructor() {
@@ -42,10 +48,14 @@ class Header extends Component {
     const {setUserLoggedIn, logout} = this.props;
       return (
               <HeaderContainer>
-                <StyledHeader>Sapa</StyledHeader>
+                <StyledLink to="search">
+                  <StyledHeader>Sapa</StyledHeader>
+                </StyledLink>
                 <ButtonContainer id='SapaHeader'>
                   {this.state.isLoggingIn && <LoginPopover toggleLogin={this.toggleLogin} setUser={setUserLoggedIn} rootId='SapaHeader'/>}
-                  <Button id="signup-button" inverse onClick={this.props.toggleSignUp} value='Sign Up'/>
+                  <Button id="search-button" to="search" inverse value='Search'/>
+                  <Button id="wishlist-button" to="wishlist" inverse value='Wish List'/>
+                  <Button id="signup-button" to="register" inverse value='Sign Up'/>
                   {isLoggedIn ? <Button id="logout-button" inverse onClick={logout} value='Logout'/> : <Button id="login-button" inverse onClick={this.toggleLogin} value='Login'/>}
                 </ButtonContainer>
               </HeaderContainer>
