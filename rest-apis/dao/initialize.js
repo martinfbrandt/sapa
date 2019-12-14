@@ -19,9 +19,12 @@ const createExperienceUserBridgeTable = 'CREATE TABLE IF NOT EXISTS experience_u
 
 const createWishlistTable = 'CREATE TABLE IF NOT EXISTS wishlist (id INTEGER PRIMARY KEY, location TEXT, description TEXT);';
 const createWishlistItemTable = 'CREATE TABLE IF NOT EXISTS wishlist_item (id INTEGER PRIMARY KEY, experience_id INTEGER, wishlist_id INTEGER, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE), CONSTRAINT fk_wishlist FOREIGN KEY (wishlist_id) REFERENCES wishlist(id) ON DELETE CASCADE);';
+const createUserWishlistBridgeTable = 'CREATE TABLE IF NOT EXISTS wishlist_user_bt (id INTEGER PRIMARY KEY, user_id INTEGER, wishlist_id INTEGER, CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_wishlist FOREIGN KEY (wishlist_id) REFERENCES wishlist(id) ON DELETE CASCADE);';
 
 const createCalendarTable = 'CREATE TABLE IF NOT EXISTS calendar (id INTEGER PRIMARY KEY);';
 const createCalendarItemTable = 'CREATE TABLE IF NOT EXISTS calendar_item (id INTEGER PRIMARY KEY, experience_id INTEGER, calendar_id INTEGER, added_dt TEXT NOT NULL, scheduled_dt TEXT NOT NULL, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE), CONSTRAINT fk_calendar FOREIGN KEY (calendar_id) REFERENCES calendar(id) ON DELETE CASCADE);'
+const createUserCalendarBridgeTable = 'CREATE TABLE IF NOT EXISTS calendar_user_bt (id INTEGER PRIMARY KEY, user_id INTEGER, calendar_id INTEGER, CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_calendar FOREIGN KEY (calendar_id) REFERENCES calendar(id) ON DELETE CASCADE);';
+
 
 const deleteAdminUserRoles = `DELETE FROM user_roles where user_id = (SELECT id from users where email = '${adminEmail}')`
 const deleteAdminUser = `DELETE FROM users where email = '${adminEmail}'`;
@@ -37,8 +40,10 @@ const initializeDB = async () => {
     db.run(createExperienceUserBridgeTable);
     db.run(createWishlistTable);
     db.run(createWishlistItemTable);
+    db.run(createUserWishlistBridgeTable);
     db.run(createCalendarTable);
     db.run(createCalendarItemTable);
+    db.run(createUserCalendarBridgeTable);
     db.run(deleteAdminUserRoles);
     db.run(deleteAdminUser);
     db.run(createAdminUser(await adminPassHash()));
