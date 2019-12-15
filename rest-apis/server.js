@@ -22,6 +22,14 @@ const {
   retrieveExperience,
   patchExperience
 } = require("./dao/experiences");
+
+const {
+  createWishlists,
+  updateWishlists,
+  getAllUserWishlists,
+  getAllWishlists,
+  deleteWishlists
+} = require("./dao/wishlists");
 const https = require("https");
 const fs = require("fs");
 const { pathOr, assoc } = require("ramda");
@@ -133,6 +141,28 @@ app.patch("/api/experiences/:id", authValidation, hasRole(["user", "admin"]), va
 app.delete("/api/experiences/:id", authValidation, hasRole(["user", "admin"]), (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
   deleteExperience(userId, req.params.id, res);
+});
+
+
+// wishlist services 
+app.post("/api/wishlists", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  createWishlists(userId, req.body, res);
+});
+
+app.patch("/api/wishlists/:id", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  updateWishlists(userId, req.body, res);
+});
+
+app.delete("/api/wishlists/:id", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  deleteWishlists(userId, req.body, res);
+});
+
+app.get("/api/wishlists", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  hasRole(["user", "admin"]) ? getAllWishlists(res) : getAllUserWishlists(userId, res);
 });
 
 https

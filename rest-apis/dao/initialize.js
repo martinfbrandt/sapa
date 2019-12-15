@@ -17,12 +17,12 @@ const createExperiencesTable = 'CREATE TABLE IF NOT EXISTS experiences ( id INTE
 
 const createExperienceUserBridgeTable = 'CREATE TABLE IF NOT EXISTS experience_user_bt (id INTEGER PRIMARY KEY, user_id INTEGER, experience_id INTEGER, CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE);';
 
-const createWishlistTable = 'CREATE TABLE IF NOT EXISTS wishlist (id INTEGER PRIMARY KEY, location TEXT, description TEXT);';
-const createWishlistItemTable = 'CREATE TABLE IF NOT EXISTS wishlist_item (id INTEGER PRIMARY KEY, experience_id INTEGER, wishlist_id INTEGER, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE, CONSTRAINT fk_wishlist FOREIGN KEY (wishlist_id) REFERENCES wishlist(id) ON DELETE CASCADE);';
-const createUserWishlistBridgeTable = 'CREATE TABLE IF NOT EXISTS wishlist_user_bt (id INTEGER PRIMARY KEY, user_id INTEGER, wishlist_id INTEGER, CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_wishlist FOREIGN KEY (wishlist_id) REFERENCES wishlist(id) ON DELETE CASCADE);';
+const createWishlistTable = 'CREATE TABLE IF NOT EXISTS wishlists (id INTEGER PRIMARY KEY, location TEXT, description TEXT, creator_id INTEGER, CONSTRAINT fk_wishlist_creator FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE);';
+const createWishlistItemTable = 'CREATE TABLE IF NOT EXISTS wishlist_item (id INTEGER PRIMARY KEY, experience_id INTEGER, wishlist_id INTEGER, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE, CONSTRAINT fk_wishlist FOREIGN KEY (wishlist_id) REFERENCES wishlists(id) ON DELETE CASCADE);';
+const createUserWishlistBridgeTable = 'CREATE TABLE IF NOT EXISTS wishlist_user_bt (id INTEGER PRIMARY KEY, user_id INTEGER, wishlist_id INTEGER, CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_wishlist FOREIGN KEY (wishlist_id) REFERENCES wishlists(id) ON DELETE CASCADE);';
 
-const createCalendarTable = 'CREATE TABLE IF NOT EXISTS calendar (id INTEGER PRIMARY KEY);';
-const createCalendarItemTable = 'CREATE TABLE IF NOT EXISTS calendar_item (id INTEGER PRIMARY KEY, experience_id INTEGER, calendar_id INTEGER, added_dt TEXT NOT NULL, scheduled_dt TEXT NOT NULL, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE, CONSTRAINT fk_calendar FOREIGN KEY (calendar_id) REFERENCES calendar(id) ON DELETE CASCADE);'
+const createCalendarTable = 'CREATE TABLE IF NOT EXISTS calendar (id INTEGER PRIMARY KEY, creator_id INTEGER NOT NULL, CONSTRAINT fk_calendar_creator FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE);';
+const createCalendarItemTable = 'CREATE TABLE IF NOT EXISTS calendar_item (id INTEGER PRIMARY KEY, experience_id INTEGER, calendar_id INTEGER, added_dt TEXT NOT NULL, s TEXT NOT NULL, CONSTRAINT fk_experience FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE, CONSTRAINT fk_calendar FOREIGN KEY (calendar_id) REFERENCES calendar(id) ON DELETE CASCADE);'
 const createUserCalendarBridgeTable = 'CREATE TABLE IF NOT EXISTS calendar_user_bt (id INTEGER PRIMARY KEY, user_id INTEGER, calendar_id INTEGER, CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT fk_calendar FOREIGN KEY (calendar_id) REFERENCES calendar(id) ON DELETE CASCADE);';
 
 

@@ -6,7 +6,7 @@ const { checkIfExists, interpretError } = require("../utils/daoError");
 module.exports.createExperience = function(userId, experience, res) {
   let database = new Database();
 
-  const query = `INSERT INTO experiences (description, name, created_dt, user_id) VALUES (
+  const query = `INSERT INTO experiences (description, name, created_dt, owner_id) VALUES (
         ?, 
         ?, 
         datetime('now'), 
@@ -18,7 +18,7 @@ module.exports.createExperience = function(userId, experience, res) {
     //retrieve the created experience
     .then(async () => {
       const createdExperiences = await database.runQuery(
-        `SELECT * FROM experiences WHERE user_id = ? ORDER BY id DESC LIMIT 1`, [userId]
+        `SELECT * FROM experiences WHERE owner_id = ? ORDER BY id DESC LIMIT 1`, [userId]
       );
       //close the database and return the experience to the service
       await database.close().then(() => res.json(head(createdExperiences)));
@@ -50,12 +50,12 @@ module.exports.patchExperience = async (userId, experienceId, experience, res) =
   let updateScript =
     "UPDATE experiences " +
     `SET ${updateItems.join(", ")}` +
-    ` WHERE id = ? and user_id = ?;`;
+    ` WHERE id = ? and owner_id = ?;`;
   return database
     .runQuery(updateScript, params)
     .then(async () => {
       const experiences = await database.runQuery(
-        `SELECT * FROM experiences WHERE id = ? and user_id = ?`, [experienceId, userId]
+        `SELECT * FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId]
       );
       const updatedExperience = head(experiences);
 
@@ -72,7 +72,7 @@ module.exports.retrieveExperience = (userId, experienceId, res) => {
   let database = new Database();
   database
     .runQuery(
-      `SELECT * FROM experiences WHERE id = ? and user_id = ?;`, [experienceId, userId]
+      `SELECT * FROM experiences WHERE id = ? and owner_id = ?;`, [experienceId, userId]
     )
     .then(experiences =>
       database.close().then(() => {
@@ -92,7 +92,7 @@ module.exports.getExperiences = (userId, res) => {
   let database = new Database();
 
   return database
-    .runQuery(`SELECT * FROM experiences WHERE user_id = ?`, [userId])
+    .runQuery(`SELECT * FROM experiences WHERE owner_id = ?`, [userId])
     .then(async experiences => {
       await database.close().then(() => res.json(experiences));
     })
@@ -105,13 +105,13 @@ module.exports.deleteExperience = async (userId, experienceId, res) => {
   let database = new Database();
 
   let experiences = await database.runQuery(
-    `SELECT * FROM experiences WHERE id = ? and user_id = ?;`, [experienceId, userId]
+    `SELECT * FROM experiences WHERE id = ? and owner_id = ?;`, [experienceId, userId]
   );
 
   checkIfExists(head(experiences), res);
 
   return database
-    .runQuery(`DELETE FROM experiences WHERE id = ? and user_id = ?`, [experienceId, userId])
+    .runQuery(`DELETE FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId])
     .then(() => {
       database.close().then(() => res.status(200).send());
     })
