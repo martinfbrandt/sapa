@@ -20,15 +20,26 @@ const {
   deleteExperience,
   createExperience,
   retrieveExperience,
-  patchExperience
+  patchExperience,
+
 } = require("./dao/experiences");
+
+const {
+  createCalendar,
+  addCalendarExperience,
+  removeCalendarExperience, 
+  getAllUserCalendarExperiences
+} = require('./dao/calendars');
 
 const {
   createWishlists,
   updateWishlists,
   getAllUserWishlists,
   getAllWishlists,
-  deleteWishlists
+  deleteWishlists,
+  addWishlistExperience,
+  removeWishlistExperience,
+  getAllUserWishlists
 } = require("./dao/wishlists");
 const https = require("https");
 const fs = require("fs");
@@ -163,6 +174,33 @@ app.delete("/api/wishlists/:id", authValidation, async (req, res) => {
 app.get("/api/wishlists", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
   hasRole(["user", "admin"]) ? getAllWishlists(res) : getAllUserWishlists(userId, res);
+});
+
+// wishlist experience services
+app.post("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  addWishlistExperience(userId, wishlistId, experienceId, req.body, res);
+});
+
+app.get("/api/wishlists/:wishlistId/experiences", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  getAllUserWishlists(userId, res);
+})
+
+app.delete("/api/wishlists/:wishlistId/eperiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  removeWishlistExperience(userId, wishlistId, experienceId, res);
+});
+
+// calendar experience services
+app.post("/api/wishlists/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  addCalendarExperience(userId, calendarId, experienceId, req.body, res);
+});
+
+app.delete("/api/wishlists/:calendarId/eperiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  removeCalendarExperience(userId, calendarId, experienceId, res);
 });
 
 https

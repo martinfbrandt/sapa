@@ -29,6 +29,46 @@ module.exports.createWishlists = function(userId, wishlist, res) {
       });
     }
 
+
+module.exports.addWishlistExperience = function(userId, wishlistId, experienceId, experience, res) {
+    let database = new Database();
+
+    const query = `INSERT INTO wishlist_item (experience_id, wishlist_id, added_dt) 
+        VALUES (?, SELECT id FROM wishlist WHERE id = ? AND creator_id = ?, datetime('now');`
+    
+    database
+        .runQuery(query, [experience.id, wishlistId, userId, experience.scheduledDate])
+        //retrieve the added experience
+        .then(async () => await database.runQuery('SELECT last_insert_rowid()'))
+        .then(async wishlistItemId => {
+            const newWishlistItem = await database.runQuery(
+                `SELECT * FROM wishlist_item WHERE id = ?`, [getInsertedRowId(wishlistItemId)]
+            );
+            //close the database and return the wishlist item to the service
+            await database.close().then(() => res.json(head(newWishlistItem)));
+        })
+        .catch(err => {
+            interpretError(err, 'wishlist item', res);
+        });
+    }
+
+module.exports.removeWishlistExperience = function(userId, wishlistId, experienceId, res) {
+    let database = new Database();
+    
+    const query = `DELETE FROM wishlist_item WHERE experience_id = ? AND 
+      wishlist_id = (SELECT id FROM wishlist WHERE wishlist_id = ? AND creator_id = ?);`
+    
+    database
+        .runQuery(query, [experienceId, wishlistId, userId])
+        .then(async () => {
+            await database.close().then(() => res.status(200).send());
+        })
+        .catch(err => {
+            interpretError(err, 'wishlist item', res);
+        });
+    }
+    
+
 module.exports.updateWishlists = function(userId, wishListId, wishlist, res) {
     let database = new Database();
 
