@@ -24,7 +24,6 @@ describe('Runs through user tests', () => {
                 return chakram.get(concat(endpoint, '/users'), {headers: {'authorization': jwt}})
                     .then(users => prop('id', find(propEq('email', 'barry@sapa.com'), users.body)))})
                         .then(id => chakram.delete(concat(endpoint, `/users/${id}`),{}, {headers: {'authorization': jwt}}))
-                
     });
 
 
@@ -40,6 +39,41 @@ describe('Runs through user tests', () => {
         .then(response => {
             expect(response).to.have.status(200)
             expect(response).to.have.header('access-control-allow-methods')
+        })
+        .catch(err => {
+            throw new Error(err)
+        })
+    })
+
+    it("Should fail to create a user without a password", () => {
+        return chakram.post(concat(endpoint, '/signup'), 
+          {
+              "name":"barry goldwater",
+              "email":"barry@blah.com",
+              "password":"",
+              "roles":["user"]
+          }, headers)
+          .then(response => {
+              expect(response).to.have.status(400)
+              expect(response.body.error).to.equal('A user password must be provided')
+          })
+          .catch(err => {
+              throw new Error(err)
+          })
+      })
+
+
+    it("Should fail to create a user without a name", () => {
+    return chakram.post(concat(endpoint, '/signup'), 
+        {
+            "email":"barry@blah.com",
+            "password":"1233456",
+            "roles":["user"]
+        }, headers)
+        .then(response => {
+            console.log(response.body)
+            expect(response).to.have.status(400)
+            expect(response.body.error).to.equal('A user name must be provided')
         })
         .catch(err => {
             throw new Error(err)
