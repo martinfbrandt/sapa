@@ -71,7 +71,7 @@ app.post("/api/login", (req, res) => {
   loginUser(req.body, res);
 });
 
-app.post("/api/initialize", (req, res) => {
+app.post("/api/initialize", async (req, res) => {
   initialize();
   res.send({ initialized: "true" });
 });

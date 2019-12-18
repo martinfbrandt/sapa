@@ -6,14 +6,15 @@ const { checkIfExists, interpretError } = require("../utils/daoError");
 module.exports.createExperience = function(userId, experience, res) {
   let database = new Database();
 
-  const query = `INSERT INTO experiences (description, name, created_dt, owner_id) VALUES (
+  const query = `INSERT INTO experiences (description, name, location, created_dt, owner_id) VALUES (
         ?, 
         ?, 
+        ?,
         datetime('now'), 
         ?)`;
 
   database
-    .runQuery(query, [experience.description, experience.name, userId])
+    .runQuery(query, [experience.description, experience.name, experience.location, userId])
     
     //retrieve the created experience
     .then(async () => {
