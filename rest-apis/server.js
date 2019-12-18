@@ -34,7 +34,6 @@ const {
 const {
   createWishlists,
   updateWishlists,
-  getAllUserWishlists,
   getAllWishlists,
   deleteWishlists,
   addWishlistExperience,

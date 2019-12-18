@@ -9,6 +9,8 @@ const decodeJwt = token => {
             }
             res(decodedToken);
         })
+    }).catch(err => {
+        throw new Error(err)
     })
 }
 

@@ -62,13 +62,11 @@ module.exports.createUser = async (user, res) => {
   const userRoles = user.roles;
   //hash the password
   const updatedUser = await hashPassword(user)
-
     //insert the new user with their hashed password
   database
   .runQuery(
     `INSERT INTO users ('name', 'email', 'password_hash') 
       VALUES (
-      ?,
       ?,
       ?,
       ?
@@ -96,6 +94,7 @@ module.exports.createUser = async (user, res) => {
   )
     
     .catch(err => {
+      console.log(err)
       interpretError(err, "user", res);
     });
 };
