@@ -12,8 +12,8 @@ const {
   retrieveUser
 } = require("./dao/users");
 const { authValidation, hasRole } = require("./middleware");
-const { validateExperience} = require('./validation/experiences');
-const {validateUserCreate, validateUserRoles, validateUserUpdate} = require('./validation/users');
+const { validateExperience } = require('./validation/experiences');
+const { validateUserCreate, validateUserRoles, validateUserUpdate } = require('./validation/users');
 
 const {
   getExperiences,
@@ -27,7 +27,7 @@ const {
 const {
   createCalendar,
   addCalendarExperience,
-  removeCalendarExperience, 
+  removeCalendarExperience,
   getAllUserCalendarExperiences
 } = require('./dao/calendars');
 
@@ -38,7 +38,8 @@ const {
   deleteWishlists,
   addWishlistExperience,
   removeWishlistExperience,
-  getAllUserWishlists
+  getAllUserWishlists,
+  getAllWishlistExperiences
 } = require("./dao/wishlists");
 const https = require("https");
 const fs = require("fs");
@@ -57,7 +58,7 @@ var credentials = { key: privateKey, cert: certificate };
 
 app.use(bodyParser.json());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -88,11 +89,11 @@ app.post("/api/signup", validateUserCreate, async (req, res) => {
   createUser(userWithRole, res);
 });
 
-app.post("/api/users", 
-  authValidation, 
-  hasRole(["user-manager", "admin"]), 
-  validateUserCreate, 
-  validateUserRoles, 
+app.post("/api/users",
+  authValidation,
+  hasRole(["user-manager", "admin"]),
+  validateUserCreate,
+  validateUserRoles,
   async (req, res) => createUser(req.body, res))
 
 app.get(
@@ -178,18 +179,19 @@ app.get("/api/wishlists", authValidation, async (req, res) => {
 // wishlist experience services
 app.post("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const {wishlistId, experienceId} = req.params;
-  addWishlistExperience(userId, wishlistId, experienceId, req.body, res);
+  const { wishlistId, experienceId } = req.params;
+  addWishlistExperience(userId, wishlistId, experienceId, res);
 });
 
 app.get("/api/wishlists/:wishlistId/experiences", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
-  getAllUserWishlists(userId, res);
+  const { wishlistId } = req.params;
+  getAllWishlistExperiences(wishlistId, userId, res);
 })
 
-app.delete("/api/wishlists/:wishlistId/eperiences/:experienceId", authValidation, async (req, res) => {
+app.delete("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const {wishlistId, experienceId} = req.params;
+  const { wishlistId, experienceId } = req.params;
   removeWishlistExperience(userId, wishlistId, experienceId, res);
 });
 
@@ -199,7 +201,7 @@ app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation,
   addCalendarExperience(userId, calendarId, experienceId, req.body, res);
 });
 
-app.delete("/api/calendars/:calendarId/eperiences/:experienceId", authValidation, async (req, res) => {
+app.delete("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
   removeCalendarExperience(userId, calendarId, experienceId, res);
 });

@@ -1,5 +1,5 @@
 const chakram = require('chakram');
-const { concat, assocPath } = require('ramda');
+const { concat, head, assocPath } = require('ramda');
 const expect = chakram.expect;
 const endpoint = 'http://localhost:3000/api';
 const { mergeAtPath, headers } = require('../../utils/general');
@@ -45,21 +45,46 @@ describe('Wishlist Item tests', () => {
 
    });
 
+   // allows user to associate valid experience to a wishlist
    it('Can associate experience to wishlist', () => {
       return chakram.post(concat(endpoint, `/wishlists/${wishlist.id}/experiences/${experience.id}`),
-        {"scheduled_dt": "6/6/2019"},
-          createFullHeader(user.jwt))
-        .then(addResponse => {
-           expect(addResponse).to.have.status(200);
-        });
-   })
+         {},
+         createFullHeader(user.jwt))
+         .then(addResponse => {
+            const { body } = addResponse;
+            expect(addResponse).to.have.status(200);
+            expect(body.experience_id).to.equal(experience.id);
+            expect(body.wishlist_id).to.equal(wishlist.id)
+         });
+   });
 
-   // allows user to associate valid experience to a wishlist
+   // retrieve all wishlist items for a wishlist
+   it('Can retrieve list of wishlist items for a wishlist', () => {
+      return chakram.get(concat(endpoint, `/wishlists/${wishlist.id}/experiences`),
+         assocPath(['headers', 'authorization'], user.jwt, {}))
+         .then(wishlistResp => {
+            expect(wishlistResp.body).to.have.lengthOf(1);
+            const wishlistItem = head(wishlistResp.body);
+            expect(wishlistItem.wishlist_id).to.equal(wishlist.id);
+            expect(wishlistItem.experience_id).to.equal(experience.id);
+
+         });
+   });
+
    // blocks user from associating experience to wishlist that's not theirs
    // blocks user from associating other users' non-system experiences
    // blocks user from associating duplicate experiences to wishlist
 
    // allows user to remove experience from wishlist
+   it('Can unassociate experience to wishlist', () => {
+      return chakram.delete(concat(endpoint, `/wishlists/${wishlist.id}/experiences/${experience.id}`),
+         {},
+         assocPath(['headers', 'authorization'], user.jwt, {}))
+         .then(removeResponse => {
+            expect(removeResponse).to.have.status(200);
+         });
+   });
+
    // disallows user from removing experience from another users' wishlist
 
 })

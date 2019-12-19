@@ -2,7 +2,7 @@ const { Database } = require("./Database");
 const { hashPassword, hasValidPassword } = require("./passwords");
 const { head, __, assoc, dissoc } = require("ramda");
 const { createJwt } = require("./../utils/auth");
-const { interpretError,  checkIfExists} = require("./../utils/daoError");
+const { interpretError, checkIfExists } = require("./../utils/daoError");
 
 // method to authenticate a user, check their password against a hash and log them in if valid
 module.exports.loginUser = (login, res) => {
@@ -16,7 +16,7 @@ module.exports.loginUser = (login, res) => {
       checkIfExists(user, res)
       hasValidPassword(login.password, user).then(
         isValid =>
-          isValid ? res.send(dissoc('password_hash', assoc('jwt', createJwt(user), user))) : res.status(404).send({error:'Invalid password'}),
+          isValid ? res.send(dissoc('password_hash', assoc('jwt', createJwt(user), user))) : res.status(404).send({ error: 'Invalid password' }),
         err => interpretError(err, "user", res)
       );
     });
@@ -24,7 +24,7 @@ module.exports.loginUser = (login, res) => {
   //check password hash, if valid, return jwt
 };
 
-const putRoles = function(userId, roles, database) {
+const putRoles = function (userId, roles, database) {
   return new Promise((res, rej) =>
     database
       .runQuery(`DELETE FROM user_roles WHERE user_id = ?`, [userId])
@@ -50,7 +50,7 @@ const putRoles = function(userId, roles, database) {
 
 //returns array of role keys
 const getRoles = (userId, database) =>
-  database.runQuery(`SELECT key FROM user_roles where user_id = ?`,[userId]);
+  database.runQuery(`SELECT key FROM user_roles where user_id = ?`, [userId]);
 
 //external role retrieval method, supplied with database
 module.exports.getRoles = userId => getRoles(userId, new Database());
@@ -62,37 +62,37 @@ module.exports.createUser = async (user, res) => {
   const userRoles = user.roles;
   //hash the password
   const updatedUser = await hashPassword(user)
-    //insert the new user with their hashed password
+  //insert the new user with their hashed password
   database
-  .runQuery(
-    `INSERT INTO users ('name', 'email', 'password_hash') 
+    .runQuery(
+      `INSERT INTO users ('name', 'email', 'password_hash') 
       VALUES (
       ?,
       ?,
       ?
   );`, [updatedUser.name, updatedUser.email, updatedUser.password]
-  )
-  //retrieve the created user
-  .then(() =>
-    database
-      .runQuery("SELECT id, name, email FROM users ORDER BY id DESC LIMIT 1")
-      //save the user's roles, set the updated user's roles
-      .then(savedUsers => {
-        //check for 404
-        checkIfExists(savedUsers, res);
+    )
+    //retrieve the created user
+    .then(() =>
+      database
+        .runQuery("SELECT id, name, email FROM users ORDER BY id DESC LIMIT 1")
+        //save the user's roles, set the updated user's roles
+        .then(savedUsers => {
+          //check for 404
+          checkIfExists(savedUsers, res);
 
-        const savedUser = head(savedUsers);
-        putRoles(savedUser.id, userRoles, database)
-          .then(newRoles => {
-            savedUser.roles = newRoles;
+          const savedUser = head(savedUsers);
+          putRoles(savedUser.id, userRoles, database)
+            .then(newRoles => {
+              savedUser.roles = newRoles;
 
-            return savedUser;
-          })
-          //close the database and return the user to the service
-          .then(user => database.close().then(() => res.json(user)));
-      })
-  )
-    
+              return savedUser;
+            })
+            //close the database and return the user to the service
+            .then(user => database.close().then(() => res.json(user)));
+        })
+    )
+
     .catch(err => {
       console.log(err)
       interpretError(err, "user", res);
@@ -158,7 +158,7 @@ module.exports.retrieveUser = (userId, res) => {
 
       return getRoles(user.id, database).then(roles =>
         database.close().then(() => {
-          
+
           res.json(combineUserWithRoles(user, roles));
         })
       )
