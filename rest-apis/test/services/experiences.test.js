@@ -1,7 +1,7 @@
 const chakram = require('chakram');
 const endpoint = 'http://localhost:3000/api';
 const {concat, assocPath} = require('ramda');
-const {mergeAtPath} = require('../../utils/general');
+const {mergeAtPath, headers} = require('../../utils/general');
 const experienceSchema = require('./schemas/experience.schema.json')
 const expect = chakram.expect;
 
@@ -9,11 +9,7 @@ const experienceObject = {
     "description": "blah",
     "location": "texas",
     "name":"coolexperience"
-  }
-
-const headers = {
-    'headers': { 'content-type': 'application/json' }
-}
+};
 
 const {loginUser} = require('./../utils');
 

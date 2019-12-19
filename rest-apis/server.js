@@ -178,6 +178,7 @@ app.get("/api/wishlists", authValidation, async (req, res) => {
 // wishlist experience services
 app.post("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const {wishlistId, experienceId} = req.params;
   addWishlistExperience(userId, wishlistId, experienceId, req.body, res);
 });
 
@@ -188,16 +189,17 @@ app.get("/api/wishlists/:wishlistId/experiences", authValidation, async (req, re
 
 app.delete("/api/wishlists/:wishlistId/eperiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const {wishlistId, experienceId} = req.params;
   removeWishlistExperience(userId, wishlistId, experienceId, res);
 });
 
 // calendar experience services
-app.post("/api/wishlists/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
+app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
   addCalendarExperience(userId, calendarId, experienceId, req.body, res);
 });
 
-app.delete("/api/wishlists/:calendarId/eperiences/:experienceId", authValidation, async (req, res) => {
+app.delete("/api/calendars/:calendarId/eperiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
   removeCalendarExperience(userId, calendarId, experienceId, res);
 });

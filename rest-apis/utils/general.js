@@ -5,3 +5,6 @@ module.exports.mergeAtPath = (path, origObj, insertObj) =>
      merge(view(lensPath(path), origObj), insertObj), 
        origObj); 
 
+module.exports.headers = {
+  'headers': { 'content-type': 'application/json' }
+}
