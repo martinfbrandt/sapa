@@ -217,6 +217,14 @@ app.delete("/api/calendar/experiences/:experienceId", authValidation, async (req
   removeDefaultCalendarExperience(userId, experienceId, res);
 });
 
+app.delete("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const { calendarId, experienceId } = req.params;
+
+  removeCalendarExperience(userId, calendarId, experienceId, res);
+});
+
+
 https
   .createServer(credentials, app)
   .listen(3443, () => console.log("listening on ssl"));

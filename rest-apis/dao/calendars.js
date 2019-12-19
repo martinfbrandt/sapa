@@ -8,7 +8,7 @@ const getInsertedRowId = rows => prop('last_insert_rowid()', head(rows))
 // only to be used when creating a new user as calendars and users currently have 1-1 relationship
 module.exports.createCalendar = function (userId, res) {
     let database = new Database();
-    const query = `INSERT INTO calendars (creator_id) VALUES (?)`;
+    const query = `INSERT INTO calendar (creator_id) VALUES (?)`;
 
     database
         .runQuery(query, [userId])
@@ -17,7 +17,7 @@ module.exports.createCalendar = function (userId, res) {
         .then(async rows => {
             const rowId = getInsertedRowId(rows);
             const createdCalendar = await database.runQuery(
-                `SELECT * FROM calendars WHERE id = ?`, [rowId]
+                `SELECT * FROM calendar WHERE id = ?`, [rowId]
             );
             //close the database and return the calendar to the service
             await database.close().then(() => res.json(head(createdCalendar)));
@@ -50,7 +50,8 @@ module.exports.addDefaultCalendarExperience = function (userId, experienceId, ex
             interpretError(err, 'calendar item', res);
         });
 }
-
+// Method should add an experience for a particular calendar and probably shouldn't be 
+// used by anybody but admins for now
 module.exports.addCalendarExperience = function (userId, experience, res) {
     let database = new Database();
 
@@ -68,6 +69,22 @@ module.exports.addCalendarExperience = function (userId, experience, res) {
             //close the database and return the calendar item to the service
             await database.close().then(() => res.json(head(newCalendarItem)));
         })
+        .catch(err => {
+            interpretError(err, 'calendar item', res);
+        });
+}
+
+// Method should delete an experience for a particular calendar and probably shouldn't be 
+// used by anybody but admins for now
+module.exports.removeCalendarExperience = function (userId, calendarId, experienceId, res) {
+    let database = new Database();
+
+    const query = `DELETE FROM calendar_item WHERE experience_id = ? AND 
+      calendar_id = (SELECT id FROM calendar where creator_id = ?);`
+
+    database
+        .runQuery(query, [experienceId, userId])
+        .then(() => database.close().then(() => res.status(200).send()))
         .catch(err => {
             interpretError(err, 'calendar item', res);
         });

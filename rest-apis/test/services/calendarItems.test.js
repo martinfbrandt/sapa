@@ -1,34 +1,28 @@
 const chakram = require('chakram');
 const { concat, assocPath } = require('ramda');
-const { mergeAtPath, headers } = require('../../utils/general');
+const { addJsonHeaders, addAuthHeaders } = require('../../utils/general');
 const endpoint = 'http://localhost:3000/api';
+const experienceObject = require('./objects/experience.object.json')
+const { loginUser } = require('./../utils');
+
 const expect = chakram.expect;
 
-const experienceObject = {
-  "description": "blah",
-  "location": "texas",
-  "name": "coolexperience"
-}
-
-const createFullHeader = jwt => assocPath(['headers', 'authorization'], jwt, headers)
+const createFullHeader = jwt => addJsonHeaders(addAuthHeaders({}, jwt));
 
 const adminUserCreds = {
   "email": "admin@sapa.com",
   "password": "admin"
 }
 
-const { loginUser } = require('./../utils');
-
-let user, experience;
-
+let user, adminUser, experience;
 
 describe('Calendar item tests', () => {
   // user should be able to add calendar item to their calendar one item owned by them, one by system
   before('Setup', async () => {
-    user = await loginUser(adminUserCreds);
+    adminUser = await loginUser(adminUserCreds);
 
     // create experience
-    return chakram.post(concat(endpoint, '/experiences'), experienceObject, createFullHeader(user.jwt))
+    return chakram.post(concat(endpoint, '/experiences'), experienceObject, createFullHeader(adminUser.jwt))
       .then(experienceResp => {
         experience = experienceResp.body
       });
@@ -38,7 +32,7 @@ describe('Calendar item tests', () => {
   it('Should associate an experience to a calendar', () => {
     return chakram.post(concat(endpoint, `/calendar/experiences/${experience.id}`),
       { "scheduledDate": "09/09/2019" },
-      createFullHeader(user.jwt))
+      createFullHeader(adminUser.jwt))
       .then(calendarItemResponse => {
         const { body } = calendarItemResponse;
         expect(calendarItemResponse).to.have.status(200);
@@ -53,7 +47,7 @@ describe('Calendar item tests', () => {
   it('Should unassociate an experience from a calendar', () => {
     return chakram.delete(concat(endpoint, `/calendar/experiences/${experience.id}`),
       {},
-      assocPath(['headers', 'authorization'], user.jwt, headers))
+      addAuthHeaders({}, adminUser.jwt))
       .then(response => {
         expect(response).to.have.status(200);
       })

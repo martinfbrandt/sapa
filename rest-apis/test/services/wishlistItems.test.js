@@ -1,43 +1,37 @@
 const chakram = require('chakram');
 const { concat, head, assocPath } = require('ramda');
-const expect = chakram.expect;
 const endpoint = 'http://localhost:3000/api';
-const { mergeAtPath, headers } = require('../../utils/general');
+const { addJsonHeaders, addAuthHeaders } = require('../../utils/general');
+const experienceObject = require('./objects/experience.object.json')
+const { loginUser } = require('./../utils');
 
+const expect = chakram.expect;
 
-const experienceObject = {
-   "description": "blah",
-   "location": "texas",
-   "name": "coolexperience"
-}
-
-const createFullHeader = jwt => assocPath(['headers', 'authorization'], jwt, headers)
+const createFullHeader = jwt => addJsonHeaders(addAuthHeaders({}, jwt));
 
 const adminUserCreds = {
    "email": "admin@sapa.com",
    "password": "admin"
 }
 
-const { loginUser } = require('./../utils');
-
-let user, wishlist, experience;
+let user, adminUser, wishlist, experience;
 
 describe('Wishlist Item tests', () => {
    // before block creates a wishlist and an experience
    before('Setup', async () => {
       //login
-      user = await loginUser(adminUserCreds);
+      adminUser = await loginUser(adminUserCreds);
 
       //create wishlist
       return chakram.post(concat(endpoint, '/wishlists'),
          { "location": "texas" },
-         createFullHeader(user.jwt)
+         createFullHeader(adminUser.jwt)
       )
          .then(wishlistRes => {
             wishlist = wishlistRes.body;
 
             //create experience
-            return chakram.post(concat(endpoint, '/experiences'), experienceObject, createFullHeader(user.jwt))
+            return chakram.post(concat(endpoint, '/experiences'), experienceObject, createFullHeader(adminUser.jwt))
                .then(experienceRes => {
                   experience = experienceRes.body
                })
@@ -49,7 +43,7 @@ describe('Wishlist Item tests', () => {
    it('Can associate experience to wishlist', () => {
       return chakram.post(concat(endpoint, `/wishlists/${wishlist.id}/experiences/${experience.id}`),
          {},
-         createFullHeader(user.jwt))
+         createFullHeader(adminUser.jwt))
          .then(addResponse => {
             const { body } = addResponse;
             expect(addResponse).to.have.status(200);
@@ -61,7 +55,7 @@ describe('Wishlist Item tests', () => {
    // retrieve all wishlist items for a wishlist
    it('Can retrieve list of wishlist items for a wishlist', () => {
       return chakram.get(concat(endpoint, `/wishlists/${wishlist.id}/experiences`),
-         assocPath(['headers', 'authorization'], user.jwt, {}))
+         addAuthHeaders({}, adminUser.jwt))
          .then(wishlistResp => {
             expect(wishlistResp.body).to.have.lengthOf(1);
             const wishlistItem = head(wishlistResp.body);
@@ -79,7 +73,7 @@ describe('Wishlist Item tests', () => {
    it('Can unassociate experience to wishlist', () => {
       return chakram.delete(concat(endpoint, `/wishlists/${wishlist.id}/experiences/${experience.id}`),
          {},
-         assocPath(['headers', 'authorization'], user.jwt, {}))
+         addAuthHeaders({}, adminUser.jwt))
          .then(removeResponse => {
             expect(removeResponse).to.have.status(200);
          });
