@@ -27,7 +27,8 @@ const {
 const {
   createCalendar,
   addCalendarExperience,
-  removeCalendarExperience,
+  addDefaultCalendarExperience,
+  removeDefaultCalendarExperience,
   getAllUserCalendarExperiences
 } = require('./dao/calendars');
 
@@ -196,14 +197,24 @@ app.delete("/api/wishlists/:wishlistId/experiences/:experienceId", authValidatio
 });
 
 // calendar experience services
+app.post("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const { experienceId } = req.params;
+  addDefaultCalendarExperience(userId, experienceId, req.body, res);
+});
+
 app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const { calendarId, experienceId } = req.params;
+
   addCalendarExperience(userId, calendarId, experienceId, req.body, res);
 });
 
-app.delete("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
+app.delete("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
-  removeCalendarExperience(userId, calendarId, experienceId, res);
+  const { calendarId, experienceId } = req.params;
+
+  removeDefaultCalendarExperience(userId, experienceId, res);
 });
 
 https

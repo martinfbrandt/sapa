@@ -32,6 +32,7 @@ const deleteAdminUser = `DELETE FROM users where email = '${adminEmail}'`;
 
 const createAdminUser = pass => `INSERT INTO users (name, email, password_hash) VALUES ("admin", '${adminEmail}', "${pass}")`
 const createAdminRole = `INSERT INTO user_roles (key, user_id) VALUES('admin', (SELECT id from users where email = '${adminEmail}'))`
+const createAdminCalendar = `INSERT INTO calendar (creator_id) VALUES((SELECT id FROM users WHERE email = '${adminEmail}'))`
 
 const initializeDB = async () => {
     let db = new sqlite3.Database('/Users/martinbrandt/sqldb/sqlite.db');
@@ -48,7 +49,8 @@ const initializeDB = async () => {
     db.run(deleteAdminUserRoles);
     db.run(deleteAdminUser);
     db.run(createAdminUser(await adminPassHash()));
-    db.run(createAdminRole)
+    db.run(createAdminRole);
+    db.run(createAdminCalendar);
     db.close();
 };
 
