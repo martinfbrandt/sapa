@@ -2,6 +2,7 @@ const { isEmpty } = require("ramda");
 
 module.exports.interpretError = (err, type, res) => {
   const errno = err.errno;
+  console.log(err)
   if (errno == 19) {
     res.status(409).send({ error: `The ${type} already exists` });
   } else if (errno == 1) {

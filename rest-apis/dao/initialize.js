@@ -47,7 +47,7 @@ const initializeDB = async () => {
     db.run(createUserCalendarBridgeTable);
     db.run(deleteAdminUserRoles);
     db.run(deleteAdminUser);
-    db.run(createAdminUser(adminPassHash()));
+    db.run(createAdminUser(await adminPassHash()));
     db.run(createAdminRole)
     db.close();
 };

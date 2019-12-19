@@ -12,7 +12,6 @@ module.exports.createExperience = function(userId, experience, res) {
         ?,
         datetime('now'), 
         ?)`;
-
   database
     .runQuery(query, [experience.description, experience.name, experience.location, userId])
     
@@ -43,6 +42,10 @@ module.exports.patchExperience = async (userId, experienceId, experience, res) =
   if (experience.name) {
     updateItems.push(`name = ?`);
     params.push(experience.name)
+  }
+  if (experience.location) {
+    updateItems.push(`location = ?`);
+    params.push(experience.location)
   }
 
   params.push(experienceId);
@@ -110,7 +113,6 @@ module.exports.deleteExperience = async (userId, experienceId, res) => {
   );
 
   checkIfExists(head(experiences), res);
-
   return database
     .runQuery(`DELETE FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId])
     .then(() => {
