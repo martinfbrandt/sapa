@@ -14,6 +14,8 @@ const adminUserCreds = {
   "password": "admin"
 }
 
+let wishlist;
+
 
 describe('Wishlist tests', () => {
   // create a wishlist if provided description/location
@@ -40,6 +42,19 @@ describe('Wishlist tests', () => {
         expect(wishlist).to.have.keys('id', 'location', 'description', 'creator_id');
       });
   })
+
+
+    // retrieve wishlist by id
+    it('Can retrieve wishlist by ID', () => {
+      return chakram.get(concat(endpoint, `/wishlists/${wishlist.id}`),
+        addAuthHeaders({}, adminUser.jwt))
+        .then(wishlistResp => {
+          expect(wishlistResp.body).to.be.an('object');
+          const foundWishlist = wishlistResp.body;
+          expect(foundWishlist).to.have.keys('id', 'location', 'description', 'creator_id');
+  
+        });
+    });
 
 
   // retrieve all wishlists

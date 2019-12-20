@@ -29,6 +29,22 @@ module.exports.createWishlists = function (userId, wishlist, res) {
         });
 }
 
+module.exports.getWishlistById = function (userId, wishlistId, res) {
+    let database = new Database();
+
+    const query = `SELECT * FROM wishlists WHERE id = ? AND creator_id = ?;`
+
+    database
+        .runQuery(query, [wishlistId, userId])
+        .then(async wishlists => {
+            const wishlist = head(wishlists);
+            database.close().then(() => res.json(wishlist));
+        })
+        .catch(err => {
+            interpretError(err, 'wishlist item', res);
+        });
+}
+
 
 module.exports.addWishlistExperience = function (userId, wishListId, experienceId, res) {
     let database = new Database();
@@ -63,6 +79,18 @@ module.exports.removeWishlistExperience = function (userId, wishlistId, experien
         .then(() => database.close().then(() => res.status(200).send()))
         .catch(err => {
             interpretError(err, 'wishlist item', res);
+        });
+}
+
+module.exports.getWishlistExperienceById = function (wishlistId, experienceId, userId, res) {
+    let database = new Database();
+    const query = `SELECT * FROM wishlist_item WHERE experience_id = ? AND wishlist_id = (SELECT id FROM wishlists WHERE id = ? AND creator_id = ?)`;
+
+    database
+        .runQuery(query, [experienceId, wishlistId, userId])
+        .then(async wishlistExperiences => {
+            //close the databse connection and return the wishlist items
+            await database.close().then(() => res.json(head(wishlistExperiences)))
         });
 }
 

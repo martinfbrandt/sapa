@@ -104,6 +104,20 @@ module.exports.removeDefaultCalendarExperience = function (userId, experienceId,
         });
 }
 
+module.exports.getCalendarExperienceById = function (userId, experienceId, res) {
+    let database = new Database();
+
+    const query = `SELECT * FROM calendar_item WHERE experience_id = ? AND 
+      calendar_id = (SELECT id FROM calendar where creator_id = ?);`
+
+    database
+        .runQuery(query, [experienceId, userId])
+        .then(calendarExperiences => database.close().then(() => res.json(head(calendarExperiences))))
+        .catch(err => {
+            interpretError(err, 'calendar item', res);
+        });
+}
+
 module.exports.getDefaultCalendarExperiences = function (userId, res) {
     let database = new Database();
     const query = `SELECT * FROM calendar_item where calendar_id = (SELECT id FROM calendar WHERE creator_id = ?)`;

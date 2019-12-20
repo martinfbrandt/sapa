@@ -53,10 +53,21 @@ describe('Wishlist Item tests', () => {
    });
 
 
+   // retrieve wishlist experience by id
+   it('Can retrieve wishlist experience by ID', () => {
+      return chakram.get(concat(endpoint, `/wishlists/${wishlist.id}/experiences/${experience.id}`),
+         addAuthHeaders({}, adminUser.jwt))
+         .then(wishlistResp => {
+            expect(wishlistResp.body).to.be.an('object');
+            const wishlistExperience = wishlistResp.body;
+            expect(wishlistExperience.wishlist_id).to.equal(wishlist.id);
+            expect(wishlistExperience.experience_id).to.equal(experience.id);
 
+         });
+   });
 
    // retrieve all wishlist items for a wishlist
-   it('Can retrieve list of wishlist items for a wishlist', () => {
+   it('Can retrieve list of wishlist experiences for a wishlist', () => {
       return chakram.get(concat(endpoint, `/wishlists/${wishlist.id}/experiences`),
          addAuthHeaders({}, adminUser.jwt))
          .then(wishlistResp => {

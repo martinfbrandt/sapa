@@ -29,7 +29,8 @@ const {
   addCalendarExperience,
   addDefaultCalendarExperience,
   removeDefaultCalendarExperience,
-  getDefaultCalendarExperiences
+  getDefaultCalendarExperiences,
+  getCalendarExperienceById
 } = require('./dao/calendars');
 
 const {
@@ -40,7 +41,9 @@ const {
   addWishlistExperience,
   removeWishlistExperience,
   getAllUserWishlists,
-  getAllWishlistExperiences
+  getAllWishlistExperiences,
+  getWishlistById,
+  getWishlistExperienceById
 } = require("./dao/wishlists");
 const https = require("https");
 const fs = require("fs");
@@ -177,6 +180,12 @@ app.get("/api/wishlists", authValidation, async (req, res) => {
   hasRole(["user", "admin"]) ? getAllWishlists(res) : getAllUserWishlists(userId, res);
 });
 
+app.get("/api/wishlists/:wishlistId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const {wishlistId} = req.params;
+  getWishlistById(userId, wishlistId, res);
+});
+
 // wishlist experience services
 app.post("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
@@ -188,6 +197,12 @@ app.get("/api/wishlists/:wishlistId/experiences", authValidation, async (req, re
   const userId = pathOr(0, ["decoded", "data", "id"], req);
   const { wishlistId } = req.params;
   getAllWishlistExperiences(wishlistId, userId, res);
+})
+
+app.get("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const { wishlistId, experienceId } = req.params;
+  getWishlistExperienceById(wishlistId, experienceId, userId, res);
 })
 
 app.delete("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
@@ -202,6 +217,14 @@ app.post("/api/calendar/experiences/:experienceId", authValidation, async (req, 
   const { experienceId } = req.params;
   addDefaultCalendarExperience(userId, experienceId, req.body, res);
 });
+
+// calendar experience services
+app.get("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+  const { experienceId } = req.params;
+  getCalendarExperienceById(userId, experienceId, res);
+});
+
 
 app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);

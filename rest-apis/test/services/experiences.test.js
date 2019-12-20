@@ -11,7 +11,7 @@ const expect = chakram.expect;
 const adminUserCreds = {
     "email": "admin@sapa.com",
     "password": "admin"
-}
+};
 
 let adminUser, experience
 
@@ -24,7 +24,7 @@ describe('Experience tests', () => {
 
         return chakram.post(concat(endpoint, '/experiences'),
             experienceObject,
-              addJsonHeaders(addAuthHeaders({}, adminUser.jwt))
+            addJsonHeaders(addAuthHeaders({}, adminUser.jwt))
         )
             .then(experienceRes => {
                 experience = experienceRes.body;
@@ -49,16 +49,27 @@ describe('Experience tests', () => {
     // update any experience if user is admin
     // fail to update if user isn't owner of experience and not admin
 
+    // get experience by ID
+    it('Can retrieve experience by ID', () => {
+        return chakram.get(concat(endpoint, `/experiences/${experience.id}`),
+            addAuthHeaders({}, adminUser.jwt))
+            .then(experienceRes => {
+                expect(experienceRes).to.have.status(200);
+                expect(experienceRes.body).to.be.an('object');
+                expect(experienceRes.body).to.have.keys('location', 'description', 'created_dt', 'id', 'owner_id', 'name')
+            });
+    });
+
     // get all experiences for a user
     it('Can retrieve all user experiences', () => {
-        return chakram.get(concat(endpoint, '/experiences'), 
-          addAuthHeaders({}, adminUser.jwt))
-          .then(experienceRes => {
-              expect(experienceRes).to.have.status(200);
-              expect(experienceRes.body).to.be.an('array');
-              expect(head(experienceRes.body)).to.have.keys('location', 'description', 'created_dt', 'id', 'owner_id', 'name')
-          })
-    })
+        return chakram.get(concat(endpoint, '/experiences'),
+            addAuthHeaders({}, adminUser.jwt))
+            .then(experienceRes => {
+                expect(experienceRes).to.have.status(200);
+                expect(experienceRes.body).to.be.an('array');
+                expect(head(experienceRes.body)).to.have.keys('location', 'description', 'created_dt', 'id', 'owner_id', 'name')
+            });
+    });
 
     // delete an experience if user is owner
     it('Can delete experience', () => {

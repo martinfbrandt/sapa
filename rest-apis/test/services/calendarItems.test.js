@@ -40,6 +40,16 @@ describe('Calendar item tests', () => {
       })
   });
 
+    // User can retrieve experience by ID
+    it('Should return calendar experience by ID', () => {
+      return chakram.get(concat(endpoint, `/calendar/experiences/${experience.id}`), addAuthHeaders({}, adminUser.jwt))
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(response.body).to.be.an('object');
+        expect(response.body).to.have.keys('id', 'experience_id', 'calendar_id', 'added_dt', 'scheduled_dt')
+      });
+    });
+
   // User can retrieve all experiences for their caledar
   it('Should return all experiences associated with a user calendar', () => {
     return chakram.get(concat(endpoint, '/calendar/experiences'), addAuthHeaders({}, adminUser.jwt))
