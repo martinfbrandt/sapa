@@ -36,6 +36,9 @@ const createAdminCalendar = `INSERT INTO calendar (creator_id) VALUES((SELECT id
 
 const initializeDB = async () => {
     let db = new sqlite3.Database('/Users/martinbrandt/sqldb/sqlite.db');
+    // turn on the foreign keys
+    db.run("PRAGMA foreign_keys=ON");
+
     db.run(createUserTable);
     db.run(createUserRolesTable);
     db.run(createExperiencesTable);
@@ -48,7 +51,8 @@ const initializeDB = async () => {
     db.run(createUserCalendarBridgeTable);
     db.run(deleteAdminUserRoles);
     db.run(deleteAdminUser);
-    db.run(createAdminUser(await adminPassHash()));
+    const adminUserCreateScript = createAdminUser(await adminPassHash());
+    db.run(adminUserCreateScript);
     db.run(createAdminRole);
     db.run(createAdminCalendar);
     db.close();

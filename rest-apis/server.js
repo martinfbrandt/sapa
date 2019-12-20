@@ -164,12 +164,12 @@ app.post("/api/wishlists", authValidation, async (req, res) => {
 
 app.patch("/api/wishlists/:id", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
-  updateWishlists(userId, req.body, res);
+  updateWishlists(userId, req.params.id, req.body, res);
 });
 
 app.delete("/api/wishlists/:id", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
-  deleteWishlists(userId, req.body, res);
+  deleteWishlists(userId, req.params.id, res);
 });
 
 app.get("/api/wishlists", authValidation, async (req, res) => {

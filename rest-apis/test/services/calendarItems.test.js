@@ -20,7 +20,6 @@ describe('Calendar item tests', () => {
   // user should be able to add calendar item to their calendar one item owned by them, one by system
   before('Setup', async () => {
     adminUser = await loginUser(adminUserCreds);
-
     // create experience
     return chakram.post(concat(endpoint, '/experiences'), experienceObject, createFullHeader(adminUser.jwt))
       .then(experienceResp => {
