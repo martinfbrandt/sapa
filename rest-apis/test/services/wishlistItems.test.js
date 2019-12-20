@@ -52,12 +52,15 @@ describe('Wishlist Item tests', () => {
          });
    });
 
+
+
+
    // retrieve all wishlist items for a wishlist
    it('Can retrieve list of wishlist items for a wishlist', () => {
       return chakram.get(concat(endpoint, `/wishlists/${wishlist.id}/experiences`),
          addAuthHeaders({}, adminUser.jwt))
          .then(wishlistResp => {
-            expect(wishlistResp.body).to.have.lengthOf(1);
+            expect(wishlistResp.body).to.be.an('array');
             const wishlistItem = head(wishlistResp.body);
             expect(wishlistItem.wishlist_id).to.equal(wishlist.id);
             expect(wishlistItem.experience_id).to.equal(experience.id);

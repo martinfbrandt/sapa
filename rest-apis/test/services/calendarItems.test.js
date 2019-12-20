@@ -1,5 +1,5 @@
 const chakram = require('chakram');
-const { concat, assocPath } = require('ramda');
+const { concat, head } = require('ramda');
 const { addJsonHeaders, addAuthHeaders } = require('../../utils/general');
 const endpoint = 'http://localhost:3000/api';
 const experienceObject = require('./objects/experience.object.json')
@@ -39,7 +39,17 @@ describe('Calendar item tests', () => {
         expect(body).to.have.keys('id', 'experience_id', 'calendar_id', 'added_dt', 'scheduled_dt');
         expect(body.experience_id).to.equal(experience.id);
       })
-  })
+  });
+
+  // User can retrieve all experiences for their caledar
+  it('Should return all experiences associated with a user calendar', () => {
+    return chakram.get(concat(endpoint, '/calendar/experiences'), addAuthHeaders({}, adminUser.jwt))
+    .then(response => {
+      expect(response).to.have.status(200);
+      expect(response.body).to.be.an('array');
+      expect(head(response.body)).to.have.keys('id', 'experience_id', 'calendar_id', 'added_dt', 'scheduled_dt')
+    });
+  });
   // calendar item fails to add with invalid date
   // calendar item fails to add if experience doesn't exist
 

@@ -1,6 +1,6 @@
 const chakram = require('chakram');
 const endpoint = 'http://localhost:3000/api';
-const { concat } = require('ramda');
+const { concat, head } = require('ramda');
 const { addJsonHeaders, addAuthHeaders } = require('../../utils/general');
 const experienceSchema = require('./schemas/experience.schema.json')
 const experienceObject = require('./objects/experience.object.json')
@@ -49,6 +49,16 @@ describe('Experience tests', () => {
     // update any experience if user is admin
     // fail to update if user isn't owner of experience and not admin
 
+    // get all experiences for a user
+    it('Can retrieve all user experiences', () => {
+        return chakram.get(concat(endpoint, '/experiences'), 
+          addAuthHeaders({}, adminUser.jwt))
+          .then(experienceRes => {
+              expect(experienceRes).to.have.status(200);
+              expect(experienceRes.body).to.be.an('array');
+              expect(head(experienceRes.body)).to.have.keys('location', 'description', 'created_dt', 'id', 'owner_id', 'name')
+          })
+    })
 
     // delete an experience if user is owner
     it('Can delete experience', () => {

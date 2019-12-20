@@ -104,7 +104,7 @@ module.exports.removeDefaultCalendarExperience = function (userId, experienceId,
         });
 }
 
-module.exports.getAllUserCalendarExperiences = function (userId, res) {
+module.exports.getDefaultCalendarExperiences = function (userId, res) {
     let database = new Database();
     const query = `SELECT * FROM calendar_item where calendar_id = (SELECT id FROM calendar WHERE creator_id = ?)`;
 

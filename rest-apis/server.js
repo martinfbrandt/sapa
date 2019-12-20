@@ -29,7 +29,7 @@ const {
   addCalendarExperience,
   addDefaultCalendarExperience,
   removeDefaultCalendarExperience,
-  getAllUserCalendarExperiences
+  getDefaultCalendarExperiences
 } = require('./dao/calendars');
 
 const {
@@ -208,6 +208,12 @@ app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation,
   const { calendarId, experienceId } = req.params;
 
   addCalendarExperience(userId, calendarId, experienceId, req.body, res);
+});
+
+app.get("/api/calendar/experiences", authValidation, async (req, res) => {
+  const userId = pathOr(0, ["decoded", "data", "id"], req);
+
+  getDefaultCalendarExperiences(userId, res);
 });
 
 app.delete("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
