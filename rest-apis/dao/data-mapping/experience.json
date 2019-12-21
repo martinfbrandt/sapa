@@ -1,0 +1,42 @@
+[
+  {
+    "displayName": "id",
+    "daoName": "id"
+  },
+  {
+    "displayName": "location",
+    "daoName": "location"
+  },
+  {
+    "displayName": "description",
+    "daoName": "description"
+  },
+  {
+    "displayName": "createdDt",
+    "daoName": "created_dt"
+  },
+  {
+    "displayName": "name",
+    "daoName": "name"
+  },
+  {
+    "displayName": "ownerId",
+    "daoName": "owner_id"
+  },
+  {
+    "daoName": "wishlist_id",
+    "displayName": "wishlistId"
+  },
+  {
+    "daoName": "calendar_id",
+    "displayName": "calendarId"
+  },
+  {
+    "daoName": "added_dt",
+    "displayName": "addedDt"
+  },
+  {
+    "daoName": "scheduled_dt",
+    "displayName": "scheduledDt"
+  }
+]

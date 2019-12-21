@@ -1,0 +1,19 @@
+[
+  {
+    "displayName": "id",
+    "daoName": "id"
+  },
+  {
+    "displayName": "location",
+    "daoName": "location"
+  },
+  {
+    "displayName": "description",
+    "daoName": "description"
+  },
+  {
+    "displayName": "creatorId",
+    "daoName": "creator_id"
+  }
+]
+

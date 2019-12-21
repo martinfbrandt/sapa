@@ -1,0 +1,10 @@
+[
+  {
+    "daoName": "id",
+    "displayName": "id"
+  },
+  {
+    "daoName": "owner_id",
+    "displayName": "ownerId"
+  }
+]

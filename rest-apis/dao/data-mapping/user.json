@@ -1,0 +1,15 @@
+[
+  {
+    "displayName": "id",
+    "daoName": "id"
+  },
+  {
+    "displayName": "name",
+    "daoName": "name"
+  },
+  {
+    "displayName": "email",
+    "daoName": "email"
+  }
+]
+
