@@ -1,4 +1,4 @@
-const { Database } = require("./Database");
+const { Database } = require("../dao/Database");
 const { hashPassword, hasValidPassword } = require("./passwords");
 const { head, __, assoc, dissoc } = require("ramda");
 const { createJwt } = require("./../utils/auth");

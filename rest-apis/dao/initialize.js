@@ -1,5 +1,5 @@
 var sqlite3 = require('sqlite3').verbose()
-const {hashPassword} = require('./passwords');
+const {hashPassword} = require('../controllers/passwords');
 const {prop} = require('ramda');
 
 const adminEmail = "admin@sapa.com";

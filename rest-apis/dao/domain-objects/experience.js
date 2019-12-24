@@ -3,31 +3,31 @@
 
 class Experience {
 
-    id;
-    location;
-    description;
-    name;
-    createdDt;
+    constructor(location, description, name) {
+        this.location = location;
+        this.description = description;
+        this.name = name;
+    }
 
-    getId = () => this.id;
+    get getId() { return this.id; }
 
-    getLocation = () => this.location;
+    get getLocation() { return this.location; }
 
-    getDescription = () => this.description;
+    get getDescription() { return this.description; }
 
-    getName = () => this.name;
+    get getName() { return this.name; }
 
-    getCreatedDate = () => this.createdDt;
+    get getCreatedDate() { return this.createdDt; }
 
-    setId = id => this.id = id;
+    set setId(id) { this.id = id; }
 
-    setLocation = location => this.location = location;
+    set setLocation(location) { this.location = location; }
 
-    setDescription = description => this.description = description;
+    set setDescription(description) { this.description = description; }
 
-    setName = name => this.name = name;
+    set setName(name) { this.name = name; }
 
-    setCreatedDate = date => this.createdDt = date;
+    set setCreatedDate(date) { this.createdDt = date; }
 
 }
 

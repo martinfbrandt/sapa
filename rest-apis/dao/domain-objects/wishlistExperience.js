@@ -3,21 +3,29 @@ const Experience = require('./experience');
 
 class WishlistExperience extends Experience {
 
-    creatorId;
-    wishlistId;
-    addedDt;
+    get creatorId() {
+        return this.creatorId;
+    }
 
-    getCreatorId = () => this.creatorId;
+    get wishlistId() {
+        return this.calendarId;
+    }
 
-    getWishlistId = () => this.calendarId;
+    get addedDate() {
+        return this.addedDt;
+    }
 
-    getAddedDate = () => this.addedDt;
+    set creatorId(id) {
+        this.creatorId = id;
+    }
 
-    setCreatorId = id => this.creatorId = id;
+    set wishlistId(id) {
+        this.calendarId = id;
+    }
 
-    setWishlistId = id => this.calendarId = id;
-
-    setAddedDate = date => this.addedDt = date;
+    set addedDate(date) {
+        this.addedDt = date;
+    }
 }
 
 module.exports = WishlistExperience;

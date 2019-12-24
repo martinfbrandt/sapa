@@ -10,8 +10,8 @@ const {
   patchUser,
   getUsers,
   retrieveUser
-} = require("./dao/users");
-const { authValidation, hasRole } = require("./middleware");
+} = require("./controllers/users");
+const { authValidation, hasRole } = require("./controllers/middleware");
 const { validateExperience } = require('./validation/experiences');
 const { validateUserCreate, validateUserRoles, validateUserUpdate } = require('./validation/users');
 
@@ -22,7 +22,7 @@ const {
   retrieveExperience,
   patchExperience,
 
-} = require("./dao/experiences");
+} = require("./controllers/experiences");
 
 const {
   createCalendar,
@@ -31,7 +31,7 @@ const {
   removeDefaultCalendarExperience,
   getDefaultCalendarExperiences,
   getCalendarExperienceById
-} = require('./dao/calendars');
+} = require('./controllers/calendars');
 
 const {
   createWishlists,
@@ -44,7 +44,7 @@ const {
   getAllWishlistExperiences,
   getWishlistById,
   getWishlistExperienceById
-} = require("./dao/wishlists");
+} = require("./controllers/wishlists");
 const https = require("https");
 const fs = require("fs");
 const { pathOr, assoc } = require("ramda");
@@ -212,8 +212,9 @@ app.delete("/api/wishlists/:wishlistId/experiences/:experienceId", authValidatio
 });
 
 // calendar experience services
-app.post("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
+app.post("/api/calendar/experiences/:experienceId", authValidation, validateExperience, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
+  console.log(req.experience);
   const { experienceId } = req.params;
   addDefaultCalendarExperience(userId, experienceId, req.body, res);
 });

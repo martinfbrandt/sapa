@@ -1,4 +1,4 @@
-const { Database } = require("./Database");
+const { Database } = require("../dao/Database");
 const { interpretError } = require("../utils/daoError");
 const { head, prop } = require('ramda');
 

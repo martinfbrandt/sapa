@@ -1,10 +1,10 @@
 
 
 class Wishlist {
-    id;
-    description;
-    location;
-    creatorId;
+    constructor(description, location) {
+        this.description = description;
+        this.location = location;
+    }
 
     getId = () => this.id;
 

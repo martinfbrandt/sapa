@@ -1,5 +1,5 @@
-const { decodeJwt } = require("./utils/auth");
-const { getRoles } = require("./dao/users");
+const { decodeJwt } = require("./../utils/auth");
+const { getRoles } = require("./users");
 const {
   filter,
   flip,

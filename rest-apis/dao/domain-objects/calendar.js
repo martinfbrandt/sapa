@@ -1,8 +1,6 @@
 
 
 class Calendar {
-    id;
-    ownerId;
 
     getId = () => this.id;
 

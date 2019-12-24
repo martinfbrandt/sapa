@@ -1,7 +1,9 @@
 
 
 class UserRole {
-    key;
+    constructor(key) {
+        this.key = key;
+    }
 
     getKey = () => this.key;
 

@@ -3,10 +3,10 @@ const Experience = require('./experience');
 
 class CalendarExperience extends Experience {
 
-    ownerId;
-    calendarId;
-    addedDt;
-    scheduledDt;
+
+    constructor(scheduledDt) {
+        this.scheduledDt = scheduledDt;
+    }
 
     getOwnerId = () => this.ownerId;
 

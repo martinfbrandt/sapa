@@ -3,11 +3,11 @@
 const {isNil} = require('ramda');
 
 class User {
-    id;
-    name;
-    email;
-    roles;
 
+    constructor(name, email) {
+        this.name = name;
+        this.email = email;
+    }
 
     setRoles = roles => this.roles = roles;
 
