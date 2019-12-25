@@ -29,16 +29,15 @@ module.exports.createCalendar = function (userId, res) {
 
 
 module.exports.addDefaultCalendarExperience = async function (userId, experienceId, experience) {
-    let database = new Database();
-    console.log('enters method')
-    const query = `INSERT INTO calendar_item (experience_id, calendar_id, added_dt, scheduled_dt) 
-            VALUES (?, (SELECT id FROM calendar where owner_id = ?), datetime('now'), ?);`
     try {
+        let database = new Database();
+        const query = `INSERT INTO calendar_item (experience_id, calendar_id, added_dt, scheduled_dt) 
+            VALUES (?, (SELECT id FROM calendar where owner_id = ?), datetime('now'), ?);`
+
         await database.runQuery(query, [experienceId, userId, experience.getScheduledDate])
         //retrieve the added experience
 
         let calendarItemId = await database.runQuery('SELECT last_insert_rowid()');
-        console.log(calendarItemId)
         const newCalendarItem = await database.runQuery(
             `SELECT * FROM calendar_item WHERE id = ?`, [getInsertedRowId(calendarItemId)]
         );
@@ -92,42 +91,51 @@ module.exports.removeCalendarExperience = function (userId, calendarId, experien
         });
 }
 
-module.exports.removeDefaultCalendarExperience = function (userId, experienceId, res) {
-    let database = new Database();
+module.exports.removeDefaultCalendarExperience = async function (userId, experienceId) {
+    try {
+        let database = new Database();
 
-    const query = `DELETE FROM calendar_item WHERE experience_id = ? AND 
-      calendar_id = (SELECT id FROM calendar where owner_id = ?);`
+        const query = `DELETE FROM calendar_item WHERE experience_id = ? AND 
+          calendar_id = (SELECT id FROM calendar where owner_id = ?);`
 
-    database
-        .runQuery(query, [experienceId, userId])
-        .then(() => database.close().then(() => res.status(200).send()))
-        .catch(err => {
-            interpretError(err, 'calendar item', res);
-        });
+        await database.runQuery(query, [experienceId, userId]);
+
+        await database.close();
+        Promise.resolve();
+    }
+    catch (err) {
+        interpretDaoError(err);
+    };
 }
 
-module.exports.getCalendarExperienceById = function (userId, experienceId, res) {
-    let database = new Database();
+module.exports.getCalendarExperienceById = async function (userId, experienceId) {
+    try {
+        let database = new Database();
 
-    const query = `SELECT * FROM calendar_item WHERE experience_id = ? AND 
-      calendar_id = (SELECT id FROM calendar where owner_id = ?);`
+        const query = `SELECT * FROM calendar_item WHERE experience_id = ? AND 
+          calendar_id = (SELECT id FROM calendar where owner_id = ?);`
 
-    database
-        .runQuery(query, [experienceId, userId])
-        .then(calendarExperiences => database.close().then(() => res.json(head(calendarExperiences))))
-        .catch(err => {
-            interpretError(err, 'calendar item', res);
-        });
+        const experiences = await database.runQuery(query, [experienceId, userId])
+        await database.close();
+        return Promise.resolve(experiences);
+    }
+    catch (err) {
+        interpretDaoError(err);
+    }
 }
 
-module.exports.getDefaultCalendarExperiences = function (userId, res) {
-    let database = new Database();
-    const query = `SELECT * FROM calendar_item where calendar_id = (SELECT id FROM calendar WHERE owner_id = ?)`;
+module.exports.getDefaultCalendarExperiences = async function (userId) {
+    try {
+        let database = new Database();
+        const query = `SELECT * FROM calendar_item where calendar_id = (SELECT id FROM calendar WHERE owner_id = ?)`;
 
-    database
-        .runQuery(query, [userId])
-        .then(async calendarItems => {
-            //close the database and return the calendars to the service
-            await database.close().then(() => res.json(calendarItems));
-        })
+        const calendarItems = await database.runQuery(query, [userId]);
+        //close the database and return the calendars to the service
+        await database.close();
+        return Promise.resolve(calendarItems);
+    }
+    catch (err) {
+        interpretDaoError(err);
+    }
+
 }

@@ -26,13 +26,37 @@ module.exports.postCalendar = async (req, res, next) => {
     next();
 }
 
-const findCalendarExperienceById = async (req, res, next) => { }
+module.exports.findCalendarExperienceById = async (req, res, next) => {
+    try {
+        const userId = getUserIdFromRequest(req);
+
+        const experiences = await getCalendarExperienceById(userId, req.params.experienceId);
+        res.json(head(experiences));
+    }
+    catch (err) {
+        interpretError(err, 'experience', res);
+    }
+}
 
 const postCalendarExperience = async (req, res, next) => { }
 
 const deleteCalendarExperience = async (req, res, next) => { }
 
-const deleteDefaultCalendarExperience = async (req, res, next) => { }
+module.exports.deleteDefaultCalendarExperience = async (req, res, next) => {
+    try {
+
+        const userId = getUserIdFromRequest(req);
+
+
+        removeDefaultCalendarExperience(userId, req.params.experienceId);
+
+        res.status(200).send();
+    }
+    catch (err) {
+        interpretError(err, 'experience', res);
+    }
+}
+
 
 module.exports.postDefaultCalendarExperience = async (req, res, next) => {
     try {
@@ -44,7 +68,6 @@ module.exports.postDefaultCalendarExperience = async (req, res, next) => {
             req.body.description,
             req.body.name
         );
-        console.log(experience)
         const experiences = await addDefaultCalendarExperience(userId, req.params.experienceId, experience)
         res.json(head(experiences));
     }
@@ -53,7 +76,18 @@ module.exports.postDefaultCalendarExperience = async (req, res, next) => {
     };
 }
 
-const findDefaultCalendarExperiences = async (req, res, next) => { }
+module.exports.findDefaultCalendarExperiences = async (req, res, next) => {
+    try {
+        const userId = getUserIdFromRequest(req);
+
+        const experiences = await getDefaultCalendarExperiences(userId);
+
+        res.json(experiences);
+    }
+    catch (err) {
+        interpretError(err, 'experiences', res)
+    }
+}
 
 
 const interpretError = (err, type, res) => {

@@ -26,14 +26,14 @@ const {
 
 const {
   postCalendar,
-  postDefaultCalendarExperience
+  postDefaultCalendarExperience,
+  findCalendarExperienceById,
+  deleteDefaultCalendarExperience,
+  findDefaultCalendarExperiences
 } = require('./controllers/calendarController')
 
 const {
-  addCalendarExperience,
-  removeDefaultCalendarExperience,
-  getDefaultCalendarExperiences,
-  getCalendarExperienceById
+  addCalendarExperience
 } = require('./dao/controllers/calendarDao');
 
 const {
@@ -219,11 +219,7 @@ app.post("/api/calendar/experiences/:experienceId", authValidation, validateExpe
 
 
 // calendar experience services
-app.get("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { experienceId } = req.params;
-  getCalendarExperienceById(userId, experienceId, res);
-});
+app.get("/api/calendar/experiences/:experienceId", authValidation, findCalendarExperienceById);
 
 
 app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
@@ -233,18 +229,9 @@ app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation,
   addCalendarExperience(userId, calendarId, experienceId, req.body, res);
 });
 
-app.get("/api/calendar/experiences", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
+app.get("/api/calendar/experiences", authValidation, findDefaultCalendarExperiences);
 
-  getDefaultCalendarExperiences(userId, res);
-});
-
-app.delete("/api/calendar/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { calendarId, experienceId } = req.params;
-
-  removeDefaultCalendarExperience(userId, experienceId, res);
-});
+app.delete("/api/calendar/experiences/:experienceId", authValidation, deleteDefaultCalendarExperience);
 
 app.delete("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
   const userId = pathOr(0, ["decoded", "data", "id"], req);
