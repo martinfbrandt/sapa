@@ -1,9 +1,8 @@
-const { Database } = require("../dao/Database");
-const { interpretError } = require("../utils/daoError");
+const { Database } = require("./../Database");
+const { interpretError, interpretDaoError } = require("../../utils/daoError");
 const { head, prop } = require('ramda');
+const getInsertedRowId = rows => prop('last_insert_rowid()', head(rows));
 
-
-const getInsertedRowId = rows => prop('last_insert_rowid()', head(rows))
 
 // only to be used when creating a new user as calendars and users currently have 1-1 relationship
 module.exports.createCalendar = function (userId, res) {
@@ -23,32 +22,35 @@ module.exports.createCalendar = function (userId, res) {
             await database.close().then(() => res.json(head(createdCalendar)));
         })
         .catch(err => {
-            interpretError(err, 'calendar', res);
+            interpretDaoError(err, 'calendar', res);
         });
 }
 
 
 
-module.exports.addDefaultCalendarExperience = function (userId, experienceId, experience, res) {
+module.exports.addDefaultCalendarExperience = async function (userId, experienceId, experience) {
     let database = new Database();
-
+    console.log('enters method')
     const query = `INSERT INTO calendar_item (experience_id, calendar_id, added_dt, scheduled_dt) 
             VALUES (?, (SELECT id FROM calendar where owner_id = ?), datetime('now'), ?);`
-
-    database
-        .runQuery(query, [experienceId, userId, experience.scheduledDate])
+    try {
+        await database.runQuery(query, [experienceId, userId, experience.getScheduledDate])
         //retrieve the added experience
-        .then(async () => await database.runQuery('SELECT last_insert_rowid()'))
-        .then(async calendarItemId => {
-            const newCalendarItem = await database.runQuery(
-                `SELECT * FROM calendar_item WHERE id = ?`, [getInsertedRowId(calendarItemId)]
-            );
-            //close the database and return the calendar item to the service
-            await database.close().then(() => res.json(head(newCalendarItem)));
-        })
-        .catch(err => {
-            interpretError(err, 'calendar item', res);
-        });
+
+        let calendarItemId = await database.runQuery('SELECT last_insert_rowid()');
+        console.log(calendarItemId)
+        const newCalendarItem = await database.runQuery(
+            `SELECT * FROM calendar_item WHERE id = ?`, [getInsertedRowId(calendarItemId)]
+        );
+        //close the database and return the calendar item to the service
+        await database.close();
+
+        return Promise.resolve(newCalendarItem)
+
+    }
+    catch (err) {
+        throw interpretDaoError(err);
+    }
 }
 // Method should add an experience for a particular calendar and probably shouldn't be 
 // used by anybody but admins for now
@@ -57,7 +59,6 @@ module.exports.addCalendarExperience = function (userId, experience, res) {
 
     const query = `INSERT INTO calendar_item (experience_id, calendar_id, added_dt, scheduled_dt) 
         VALUES (?, (SELECT id FROM calendar where owner_id = ?), datetime('now'), ?);`
-    console.log(query);
     database
         .runQuery(query, [experience.id, userId, experience.scheduledDate])
         //retrieve the added experience
@@ -66,6 +67,7 @@ module.exports.addCalendarExperience = function (userId, experience, res) {
             const newCalendarItem = await database.runQuery(
                 `SELECT * FROM calendar_item WHERE id = ?;`, [getInsertedRowId(calendarItemId)]
             );
+
             //close the database and return the calendar item to the service
             await database.close().then(() => res.json(head(newCalendarItem)));
         })

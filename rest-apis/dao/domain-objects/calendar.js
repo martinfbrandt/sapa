@@ -2,13 +2,13 @@
 
 class Calendar {
 
-    getId = () => this.id;
+    get getId() { return this.id; }
 
-    getOwnerId = () => this.ownerId;
+    get getOwnerId() { return this.ownerId; }
 
-    setId = id => this.id = id;
+    set setId(id) { this.id = id; }
 
-    setOwnerId = id => this.id = id;
+    set setOwnerId(id) { this.id = id; }
 }
 
 module.exports = Calendar;

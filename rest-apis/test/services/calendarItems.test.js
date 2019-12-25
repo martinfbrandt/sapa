@@ -30,7 +30,7 @@ describe('Calendar item tests', () => {
   // user should not be able to add calendar item to another user's calendar
   it('Should associate an experience to a calendar', () => {
     return chakram.post(concat(endpoint, `/calendar/experiences/${experience.id}`),
-      { "scheduledDate": "09/09/2019" },
+      { "scheduledDt": "09/09/2019" },
       createFullHeader(adminUser.jwt))
       .then(calendarItemResponse => {
         const { body } = calendarItemResponse;

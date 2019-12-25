@@ -4,25 +4,27 @@ const Experience = require('./experience');
 class CalendarExperience extends Experience {
 
 
-    constructor(scheduledDt) {
+    constructor(scheduledDt, location, description, name) {
+        super(location, description, name);
+        
         this.scheduledDt = scheduledDt;
     }
 
-    getOwnerId = () => this.ownerId;
+    get getOwnerId() { return this.ownerId; }
 
-    getCalendarId = () => this.calendarId;
+    get getCalendarId() { return this.calendarId; }
 
-    getAddedDate = () => this.addedDt;
+    get getAddedDate() { return this.addedDt; }
 
-    getScheduledDate = () => this.scheduledDt;
+    get getScheduledDate() { return this.scheduledDt; }
 
-    setOwnerId = id => this.ownerId = id;
+    set setOwnerId(id) { this.ownerId = id; }
 
-    setCalendarId = id => this.calendarId = id;
+    set setCalendarId(id) { this.calendarId = id; }
 
-    setAddedDate = date => this.addedDt = date;
+    set setAddedDate(date) { this.addedDt = date; }
 
-    setScheduledDate = date => this.scheduledDt = date;
+    set setScheduledDate(date) { this.scheduledDt = date; }
 
 }
 

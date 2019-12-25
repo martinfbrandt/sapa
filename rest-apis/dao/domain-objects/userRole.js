@@ -5,9 +5,9 @@ class UserRole {
         this.key = key;
     }
 
-    getKey = () => this.key;
+    get getKey() { return this.key; }
 
-    setKey = key => this.key = key;
+    set setKey(key) { this.key = key; }
 }
 
 module.exports = UserRole;

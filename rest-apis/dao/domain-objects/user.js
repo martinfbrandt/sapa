@@ -1,6 +1,6 @@
 
 
-const {isNil} = require('ramda');
+const { isNil } = require('ramda');
 
 class User {
 
@@ -9,21 +9,21 @@ class User {
         this.email = email;
     }
 
-    setRoles = roles => this.roles = roles;
+    set setRolesroles(roles) { this.roles = roles; }
 
-    setId = id => this.id = id;
+    set setIdid(id) { this.id = id; }
 
-    setEmail = email => this.email = email;
+    set setEmailemail(email) { this.email = email; }
 
-    setName = name => this.name = name;
+    set setNamename(name) { this.name = name; }
 
-    getId = () => this.id;
+    get getId() { return this.id; }
 
-    getEmail = () => this.email;
+    get getEmail() { return this.email; }
 
-    getName = () => this.name;
+    get getName() { return this.name; }
 
-    getRoles = () => isNil(this.roles) ? [] : this.roles;
+    get getRoles() { return isNil(this.roles) ? [] : this.roles; }
 }
 
-module.exports = User;
+module.exportsUser;

@@ -6,21 +6,21 @@ class Wishlist {
         this.location = location;
     }
 
-    getId = () => this.id;
+    get getId() { return this.id; }
 
-    getCreatorId = () => this.ownerId;
+    get getCreatorId() { return this.ownerId; }
 
-    getLocation = () => this.location;
+    get getLocation() { return this.location; }
 
-    getDescription = () => this.description;
+    get getDescription() { return this.description; }
 
-    setId = id => this.id = id;
+    set setId(id) { this.id = id; }
 
-    setCreatorId = id => this.id = id;
+    set setCreatorId(id) { this.id = id; }
 
-    setLocation = location => this.location = location;
+    set setLocation(location) { this.location = location; }
 
-    setDescription = description => this.description = description;
+    set setDescription(description) { this.description = description; }
 
 }
 
