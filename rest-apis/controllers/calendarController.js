@@ -1,5 +1,5 @@
 
-const { pathOr, head } = require('ramda');
+const { pathOr } = require('ramda');
 const { DuplicateError, BadRequestError } = require('./../utils/daoError');
 const {
     createCalendar,
@@ -18,37 +18,58 @@ const CalendarExperience = require('./../dao/domain-objects/calendarExperience')
 const getUserIdFromRequest = req => pathOr(0, ["decoded", "data", "id"], req);
 
 module.exports.postCalendar = async (req, res, next) => {
-    const userId = getUserIdFromRequest(req);
-    createCalendar(userId).then(calendars => {
-        res.json(head(calendars));
-    })
-        .catch(err => interpretError(err, type, res));
-    next();
+    try {
+        const userId = getUserIdFromRequest(req);
+        const calendar = await createCalendar(userId);
+
+        res.json(calendar);
+    }
+    catch (err) {
+        interpretError(err, type, res);
+    }
 }
 
 module.exports.findCalendarExperienceById = async (req, res, next) => {
     try {
         const userId = getUserIdFromRequest(req);
 
-        const experiences = await getCalendarExperienceById(userId, req.params.experienceId);
-        res.json(head(experiences));
+        const experience = await getCalendarExperienceById(userId, req.params.experienceId);
+        res.json(experience);
     }
     catch (err) {
         interpretError(err, 'experience', res);
     }
 }
 
-const postCalendarExperience = async (req, res, next) => { }
+const postCalendarExperience = async (req, res, next) => {
+    try {
+        const userId = getUserIdFromRequest(req);
 
-const deleteCalendarExperience = async (req, res, next) => { }
+        const experience = await addCalendarExperience(userId);
+
+        res.json(experience);
+    }
+    catch (err) {
+        interpretError(err, 'experience', res)
+    }
+}
+
+const deleteCalendarExperience = async (req, res, next) => {
+    try {
+        await removeCalendarExperience(userId, req.params.calendarId, req.params.experienceId);
+        res.status(200).send();
+    }
+    catch (err) {
+        interpretError(err, 'experience', res)
+    }
+}
 
 module.exports.deleteDefaultCalendarExperience = async (req, res, next) => {
     try {
 
         const userId = getUserIdFromRequest(req);
 
-
-        removeDefaultCalendarExperience(userId, req.params.experienceId);
+        await removeDefaultCalendarExperience(userId, req.params.experienceId);
 
         res.status(200).send();
     }
@@ -68,8 +89,8 @@ module.exports.postDefaultCalendarExperience = async (req, res, next) => {
             req.body.description,
             req.body.name
         );
-        const experiences = await addDefaultCalendarExperience(userId, req.params.experienceId, experience)
-        res.json(head(experiences));
+        const createdExperience = await addDefaultCalendarExperience(userId, req.params.experienceId, experience)
+        res.json(createdExperience);
     }
     catch (err) {
         interpretError(err, 'experience', res);
