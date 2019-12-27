@@ -29,7 +29,9 @@ const {
   postDefaultCalendarExperience,
   findCalendarExperienceById,
   deleteDefaultCalendarExperience,
-  findDefaultCalendarExperiences
+  findDefaultCalendarExperiences,
+  postCalendarExperience,
+  deleteCalendarExperience
 } = require('./controllers/calendarController')
 
 const {
@@ -37,16 +39,16 @@ const {
 } = require('./dao/controllers/calendarDao');
 
 const {
-  createWishlists,
-  updateWishlists,
-  getAllWishlists,
-  deleteWishlists,
-  addWishlistExperience,
-  removeWishlistExperience,
-  getAllUserWishlists,
-  getAllWishlistExperiences,
-  getWishlistById,
-  getWishlistExperienceById
+  postWishlists,
+  patchWishlists,
+  retrieveWishlists,
+  deleteWishlist,
+  postWishlistExperience,
+  deleteWishlistExperience,
+  retrieveUserWishlists,
+  retrieveAllWishlistExperiences,
+  retrieveWishlistById,
+  retrieveWishlistExperienceById
 } = require("./controllers/wishlistController");
 const https = require("https");
 const fs = require("fs");
@@ -163,82 +165,37 @@ app.delete("/api/experiences/:id", authValidation, hasRole(["user", "admin"]), (
 
 
 // wishlist services 
-app.post("/api/wishlists", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  createWishlists(userId, req.body, res);
-});
+app.post("/api/wishlists", authValidation, postWishlists);
 
-app.patch("/api/wishlists/:id", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  updateWishlists(userId, req.params.id, req.body, res);
-});
+app.patch("/api/wishlists/:id", authValidation, patchWishlists);
 
-app.delete("/api/wishlists/:id", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  deleteWishlists(userId, req.params.id, res);
-});
+app.delete("/api/wishlists/:id", authValidation, deleteWishlist);
 
-app.get("/api/wishlists", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  hasRole(["user", "admin"]) ? getAllWishlists(res) : getAllUserWishlists(userId, res);
-});
+app.get("/api/wishlists", authValidation, hasRole(["user", "admin"]) ? retrieveWishlists : retrieveUserWishlists);
 
-app.get("/api/wishlists/:wishlistId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const {wishlistId} = req.params;
-  getWishlistById(userId, wishlistId, res);
-});
+app.get("/api/wishlists/:wishlistId", authValidation, retrieveWishlistById);
 
 // wishlist experience services
-app.post("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { wishlistId, experienceId } = req.params;
-  addWishlistExperience(userId, wishlistId, experienceId, res);
-});
+app.post("/api/wishlists/:wishlistId/experiences/:experienceId",authValidation, postWishlistExperience);
 
-app.get("/api/wishlists/:wishlistId/experiences", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { wishlistId } = req.params;
-  getAllWishlistExperiences(wishlistId, userId, res);
-})
+app.get("/api/wishlists/:wishlistId/experiences", authValidation, retrieveAllWishlistExperiences)
 
-app.get("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { wishlistId, experienceId } = req.params;
-  getWishlistExperienceById(wishlistId, experienceId, userId, res);
-})
+app.get("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, retrieveWishlistExperienceById)
 
-app.delete("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { wishlistId, experienceId } = req.params;
-  removeWishlistExperience(userId, wishlistId, experienceId, res);
-});
+app.delete("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, deleteWishlistExperience);
 
 // calendar experience services
 app.post("/api/calendar/experiences/:experienceId", authValidation, validateExperience, postDefaultCalendarExperience);
 
-
-// calendar experience services
 app.get("/api/calendar/experiences/:experienceId", authValidation, findCalendarExperienceById);
 
-
-app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { calendarId, experienceId } = req.params;
-
-  addCalendarExperience(userId, calendarId, experienceId, req.body, res);
-});
+app.post("/api/calendars/:calendarId/experiences/:experienceId", authValidation, postCalendarExperience);
 
 app.get("/api/calendar/experiences", authValidation, findDefaultCalendarExperiences);
 
 app.delete("/api/calendar/experiences/:experienceId", authValidation, deleteDefaultCalendarExperience);
 
-app.delete("/api/calendars/:calendarId/experiences/:experienceId", authValidation, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  const { calendarId, experienceId } = req.params;
-
-  removeCalendarExperience(userId, calendarId, experienceId, res);
-});
+app.delete("/api/calendars/:calendarId/experiences/:experienceId", authValidation, deleteCalendarExperience);
 
 
 https

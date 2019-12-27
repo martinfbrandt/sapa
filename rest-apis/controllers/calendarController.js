@@ -41,7 +41,7 @@ module.exports.findCalendarExperienceById = async (req, res, next) => {
     }
 }
 
-const postCalendarExperience = async (req, res, next) => {
+module.exports.postCalendarExperience = async (req, res, next) => {
     try {
         const userId = getUserIdFromRequest(req);
 
@@ -54,7 +54,7 @@ const postCalendarExperience = async (req, res, next) => {
     }
 }
 
-const deleteCalendarExperience = async (req, res, next) => {
+module.exports.deleteCalendarExperience = async (req, res, next) => {
     try {
         await removeCalendarExperience(userId, req.params.calendarId, req.params.experienceId);
         res.status(200).send();
