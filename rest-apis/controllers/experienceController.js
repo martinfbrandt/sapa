@@ -1,124 +1,98 @@
-const { Database } = require("../dao/Database");
-const { head, __, assoc } = require("ramda");
-const { checkIfExists, interpretError } = require("../utils/daoError");
+const { pathOr } = require("ramda");
+const { interpretError, checkIfExists } = require("../utils/daoError");
+const {
+  createExperience,
+  updateExperience,
+  getExperienceById,
+  getExperiences,
+  removeExperience
+} = require('../dao/controllers/experienceDao')
+
+const Experience = require('../dao/domain-objects/experience');
+
+const getUserIdFromRequest = req => pathOr(0, ["decoded", "data", "id"], req);
+
 
 //creates a user and any attached user roles
-module.exports.createExperience = function(userId, experience, res) {
-  let database = new Database();
+module.exports.postExperience = async function (req, res, next) {
+  try {
+    const userId = getUserIdFromRequest(req);
 
-  const query = `INSERT INTO experiences (description, name, location, created_dt, owner_id) VALUES (
-        ?, 
-        ?, 
-        ?,
-        datetime('now'), 
-        ?)`;
-  database
-    .runQuery(query, [experience.description, experience.name, experience.location, userId])
-    
-    //retrieve the created experience
-    .then(async () => {
-      const createdExperiences = await database.runQuery(
-        `SELECT * FROM experiences WHERE owner_id = ? ORDER BY id DESC LIMIT 1`, [userId]
-      );
-      //close the database and return the experience to the service
-      await database.close().then(() => res.json(head(createdExperiences)));
-    })
-    .catch(err => {
-      interpretError(err, 'experience', res);
-    });
-};
+    const experience = new Experience(req.body.location, req.body.description, req.body.name);
 
-module.exports.patchExperience = async (userId, experienceId, experience, res) => {
-  let database = new Database();
-
-  let updateItems = [];
-
-  let params = [];
-
-  if (experience.description) {
-    updateItems.push(`description = ?`);
-    params.push(experience.description)
+    const createdExperience = await createExperience(userId, experience);
+    res.json(createdExperience);
   }
-  if (experience.name) {
-    updateItems.push(`name = ?`);
-    params.push(experience.name)
-  }
-  if (experience.location) {
-    updateItems.push(`location = ?`);
-    params.push(experience.location)
+  catch (err) {
+    interpretError(err);
   }
 
-  params.push(experienceId);
-  params.push(userId);
-
-  let updateScript =
-    "UPDATE experiences " +
-    `SET ${updateItems.join(", ")}` +
-    ` WHERE id = ? and owner_id = ?;`;
-  return database
-    .runQuery(updateScript, params)
-    .then(async () => {
-      const experiences = await database.runQuery(
-        `SELECT * FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId]
-      );
-      const updatedExperience = head(experiences);
-
-      //throw 404 if empty
-      checkIfExists(updatedExperience, res);
-
-      database.close().then(() => res.json(updatedExperience));
-    })
-    .catch(err => interpretError(err, 'experience', res)
-    );
 };
 
-module.exports.retrieveExperience = (userId, experienceId, res) => {
-  let database = new Database();
-  database
-    .runQuery(
-      `SELECT * FROM experiences WHERE id = ? and owner_id = ?;`, [experienceId, userId]
-    )
-    .then(experiences =>
-      database.close().then(() => {
-        const experience = head(experiences)
-        //throw 404 if empty
-        checkIfExists(experience, res);
+module.exports.patchExperience = async function (req, res, next) {
+  try {
+    const userId = getUserIdFromRequest(req);
+    const { experienceId } = req.params;
 
-        res.json(experience);
-      })
-    )
-    .catch(err => {
-      interpretError(err, 'experience', res);
-    });
+    const experience = new Experience(req.body.location, req.body.description, req.body.name);
+
+    const updatedExperience = await updateExperience(userId, experienceId, experience);
+    console.log(updatedExperience)
+    checkIfExists(updatedExperience, res);
+
+    res.json(updatedExperience);
+  }
+  catch (err) {
+    console.log(err)
+    interpretError(err);
+  }
+
 };
 
-module.exports.getExperiences = (userId, res) => {
-  let database = new Database();
+module.exports.retrieveExperienceById = async function (req, res, next) {
+  try {
+    const userId = getUserIdFromRequest(req);
+    const { experienceId } = req.params;
 
-  return database
-    .runQuery(`SELECT * FROM experiences WHERE owner_id = ?`, [userId])
-    .then(async experiences => {
-      await database.close().then(() => res.json(experiences));
-    })
-    .catch(err => {
-      interpretError(err, 'experience', res);
-    });
+    const experience = await getExperienceById(userId, experienceId);
+    checkIfExists(experience, res);
+
+    res.json(experience);
+
+  }
+  catch (err) {
+    interpretError(err);
+  }
+
 };
 
-module.exports.deleteExperience = async (userId, experienceId, res) => {
-  let database = new Database();
+module.exports.retrieveExperiences = async function (req, res, next) {
 
-  let experiences = await database.runQuery(
-    `SELECT * FROM experiences WHERE id = ? and owner_id = ?;`, [experienceId, userId]
-  );
+  try {
+    const userId = getUserIdFromRequest(req);
 
-  checkIfExists(head(experiences), res);
-  return database
-    .runQuery(`DELETE FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId])
-    .then(() => {
-      database.close().then(() => res.status(200).send());
-    })
-    .catch(err => {
-      interpretError(err, "experience", res);
-    });
+    const experiences = await getExperiences(userId);
+
+    res.json(experiences);
+
+  }
+  catch (err) {
+    interpretError(err);
+  }
+
+};
+
+module.exports.deleteExperience = async function (req, res, next) {
+
+  try {
+    const userId = getUserIdFromRequest(req);
+    const { experienceId } = req.params;
+
+    removeExperience(userId, experienceId);
+    res.status(200).send();
+  }
+  catch (err) {
+    interpretError(err);
+  }
+
 };

@@ -16,10 +16,10 @@ const { validateExperience } = require('./validation/experiences');
 const { validateUserCreate, validateUserRoles, validateUserUpdate } = require('./validation/users');
 
 const {
-  getExperiences,
+  postExperience,
   deleteExperience,
-  createExperience,
-  retrieveExperience,
+  retrieveExperiences,
+  retrieveExperienceById,
   patchExperience,
 
 } = require("./controllers/experienceController");
@@ -138,30 +138,15 @@ app.delete(
 );
 
 //experience services
-app.post("/api/experiences", authValidation, hasRole(["user", "admin"]), validateExperience, async (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  createExperience(userId, req.body, res);
-});
+app.post("/api/experiences", authValidation, hasRole(["user", "admin"]), validateExperience, postExperience);
 
-app.get("/api/experiences/:id", authValidation, hasRole(["user", "admin"]), (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  retrieveExperience(userId, req.params.id, res);
-});
+app.get("/api/experiences/:experienceId", authValidation, hasRole(["user", "admin"]), retrieveExperienceById);
 
-app.get("/api/experiences", authValidation, hasRole(["user", "admin"]), (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  getExperiences(userId, res);
-});
+app.get("/api/experiences", authValidation, hasRole(["user", "admin"]), retrieveExperiences);
 
-app.patch("/api/experiences/:id", authValidation, hasRole(["user", "admin"]), validateExperience, (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  patchExperience(userId, req.params.id, req.body, res);
-});
+app.patch("/api/experiences/:experienceId", authValidation, hasRole(["user", "admin"]), validateExperience, patchExperience);
 
-app.delete("/api/experiences/:id", authValidation, hasRole(["user", "admin"]), (req, res) => {
-  const userId = pathOr(0, ["decoded", "data", "id"], req);
-  deleteExperience(userId, req.params.id, res);
-});
+app.delete("/api/experiences/:experienceId", authValidation, hasRole(["user", "admin"]), deleteExperience);
 
 
 // wishlist services 

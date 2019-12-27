@@ -14,7 +14,7 @@ module.exports.createWishlists = async function (userId, wishlist) {
           ?)`;
 
         await database.runQuery(query, [wishlist.location, wishlist.description, userId]);
-
+        
         const createdRows = await database.runQuery('SELECT last_insert_rowid()');
         //retrieve the created wishlist
 
@@ -22,7 +22,7 @@ module.exports.createWishlists = async function (userId, wishlist) {
         const createdWishlists = await database.runQuery(
             `SELECT * FROM wishlists WHERE id = ?`, [rowId]
         );
-
+        
         //close the database and return the wishlist to the service
         await database.close();
         return Promise.resolve(head(createdWishlists));
@@ -100,7 +100,7 @@ module.exports.getWishlistExperienceById = async function (wishlistId, experienc
 
         const wishlistExperiences = await database
             .runQuery(query, [experienceId, wishlistId, userId]);
-        //close the databse connection and return the wishlist items
+        //close the database connection and return the wishlist items
         await database.close();
         return Promise.resolve(head(wishlistExperiences));
     } catch (err) {
