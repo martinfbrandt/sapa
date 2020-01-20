@@ -31,7 +31,7 @@ module.exports.checkIfExists = (result, response) => {
       .status(404)
     .send({ error: "The requested resource does not exist" });
   } else {
-    return exists;
+    throw exists;
   }
 
 };

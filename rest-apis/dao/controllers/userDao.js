@@ -1,14 +1,17 @@
 const { Database } = require("../Database");
-const { head, __, assoc } = require("ramda");
-const { interpretDaoError, checkIfExists, NotFountError } = require("../../utils/daoError");
+const { head, __, assoc, isNil, isEmpty } = require("ramda");
+const { interpretDaoError, NotFountError } = require("../../utils/daoError");
+
+
+const isNullOrEmpty = isNil || isEmpty;
 
 module.exports.getUserByEmail = async (loginUser) => {
   try { //retrieve password hash via email
     let database = new Database();
 
     const loggingInUsers = await database.runQuery(`SELECT * FROM users WHERE email = ?;`, [loginUser.email]);
-    
-    if (!checkIfExists(loggingInUsers)) {
+   
+    if (isNullOrEmpty(loggingInUsers)) {
       throw NotFountError("The user does not exist");
     }    
     return Promise.resolve(head(loggingInUsers));
@@ -72,7 +75,7 @@ module.exports.createUser = async (user, hashedPassword, userRoles) => {
 
 
     // TODO make this actually work
-    if (!checkIfExists(savedUsers)) {
+    if (isNullOrEmpty(savedUsers)) {
       throw NotFountError("The user does not exist");
     }
     let updatedUser = head(updatedUsers);
@@ -123,7 +126,9 @@ module.exports.updateUser = async (userId, user) => {
     const updatedUser = head(users);
 
     //check for 404
-    checkIfExists(updatedUser);
+    if(isNullOrEmpty(updatedUser)){
+      throw new NotFountError("The user does not exist")
+    }
 
     const updatedRoles = await getRoles(userId, database);
 
@@ -145,7 +150,9 @@ module.exports.getUserById = async (userId) => {
     const users = await database.runQuery(`SELECT id, name, email FROM users WHERE id = ?;`, [userId])
     const user = head(users);
 
-    checkIfExists(user);
+    if(isNullOrEmpty(user)){
+      throw new NotFountError("User does not exist");
+    }
 
     const roles = await getRoles(user.id, database);
     await database.close();
@@ -184,8 +191,9 @@ module.exports.removeUser = async (userId) => {
 
     let users = await database.runQuery(`SELECT * FROM users WHERE id = ?`, [userId])
 
-    checkIfExists(head(users));
-
+    if(isNullOrEmpty(head(users))){
+      throw new NotFountError("User does not exist");
+    }
     await database.runQuery(`DELETE FROM users WHERE id = ?`, [userId])
     await database.close();
 

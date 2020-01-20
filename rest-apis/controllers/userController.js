@@ -18,12 +18,10 @@ module.exports.postUserLogin = async (req, res, next) => {
     const user = new User(name, email);
 
     const foundUser = await getUserByEmail(user);
-
     const isValid = await hasValidPassword(password, foundUser);
-
     if (isValid) {
       const successfulUser = dissoc('password_hash',
-        assoc('jwt', createJwt(user), foundUser));
+        assoc('jwt', createJwt(foundUser), foundUser));
       res.json(successfulUser)
 
     } else {
@@ -39,7 +37,6 @@ module.exports.postUserLogin = async (req, res, next) => {
 module.exports.retrieveRoles = async userId => {
   try {
     const roles = await getRoles(userId);
-
     return Promise.resolve(roles);
   }
   catch (err) {
