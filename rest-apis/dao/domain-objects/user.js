@@ -4,9 +4,10 @@ const { isNil } = require('ramda');
 
 class User {
 
-    constructor(name, email) {
+    constructor(name, email, password) {
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
     set setRolesroles(roles) { this.roles = roles; }
@@ -26,4 +27,4 @@ class User {
     get getRoles() { return isNil(this.roles) ? [] : this.roles; }
 }
 
-module.exportsUser;
+module.exports = User;

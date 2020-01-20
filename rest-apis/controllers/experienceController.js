@@ -24,7 +24,7 @@ module.exports.postExperience = async function (req, res, next) {
     res.json(createdExperience);
   }
   catch (err) {
-    interpretError(err);
+    interpretError(err, 'experience', res)
   }
 
 };
@@ -37,14 +37,12 @@ module.exports.patchExperience = async function (req, res, next) {
     const experience = new Experience(req.body.location, req.body.description, req.body.name);
 
     const updatedExperience = await updateExperience(userId, experienceId, experience);
-    console.log(updatedExperience)
     checkIfExists(updatedExperience, res);
 
     res.json(updatedExperience);
   }
   catch (err) {
-    console.log(err)
-    interpretError(err);
+    interpretError(err, 'experience', res)
   }
 
 };
@@ -61,7 +59,7 @@ module.exports.retrieveExperienceById = async function (req, res, next) {
 
   }
   catch (err) {
-    interpretError(err);
+    interpretError(err, 'experience', res)
   }
 
 };
@@ -77,7 +75,7 @@ module.exports.retrieveExperiences = async function (req, res, next) {
 
   }
   catch (err) {
-    interpretError(err);
+    interpretError(err, 'experience', res)
   }
 
 };
@@ -92,7 +90,7 @@ module.exports.deleteExperience = async function (req, res, next) {
     res.status(200).send();
   }
   catch (err) {
-    interpretError(err);
+    interpretError(err, 'experience', res)
   }
 
 };

@@ -24,22 +24,33 @@ module.exports.interpretDaoError = (err) => {
 };
 
 module.exports.checkIfExists = (result, response) => {
-  if (!result || isEmpty(result)) {
+  const exists = !result || isEmpty(result);
+
+  if (response) {
     response
       .status(404)
-      .send({ error: "The requested resource does not exist" });
+    .send({ error: "The requested resource does not exist" });
+  } else {
+    return exists;
   }
+
 };
 
 
 class DaoError {
-  constructor(err){
+  constructor(err) {
     this.error = err;
   }
 
 }
 
 class DuplicateError extends DaoError {
+  constructor(err) {
+    super(err);
+  }
+}
+
+class NotFountError extends DaoError {
   constructor(err) {
     super(err);
   }

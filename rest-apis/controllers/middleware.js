@@ -1,5 +1,5 @@
-const { decodeJwt } = require("./../utils/auth");
-const { getRoles } = require("./userController");
+const { decodeJwt } = require("../utils/auth");
+const { retrieveRoles } = require("./userController");
 const {
   filter,
   flip,
@@ -44,7 +44,7 @@ module.exports.authValidation = async (req, res, next) => {
 
 module.exports.hasRole = allowedRoles => async (req, res, next) => {
   const decodedJwt = req.decoded;
-  const userRoles = await getRoles(decodedJwt.data.id);
+  const userRoles = await retrieveRoles(decodedJwt.data.id);
   const userRoleList = map(prop("key"))(userRoles);
   const isDelete = req.method === 'DELETE'
   const isUserReq = contains('/api/users', req.path);

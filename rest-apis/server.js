@@ -6,7 +6,7 @@ const initialize = require("./dao/initialize");
 const {
   createUser,
   deleteUser,
-  loginUser,
+  postUserLogin,
   patchUser,
   getUsers,
   retrieveUser
@@ -77,9 +77,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.post("/api/login", (req, res) => {
-  loginUser(req.body, res);
-});
+app.post("/api/login", postUserLogin);
 
 app.post("/api/initialize", async (req, res) => {
   initialize();

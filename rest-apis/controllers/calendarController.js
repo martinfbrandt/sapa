@@ -1,6 +1,6 @@
 
 const { pathOr } = require('ramda');
-const { DuplicateError, BadRequestError } = require('./../utils/daoError');
+const { DuplicateError, BadRequestError } = require('../utils/daoError');
 const {
     createCalendar,
     addCalendarExperience,
