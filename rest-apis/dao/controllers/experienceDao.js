@@ -1,7 +1,11 @@
 const { Database } = require("../Database");
-const { head, prop } = require("ramda");
+const { head, prop, isNil, isEmpty } = require("ramda");
 const { checkIfExists, interpretDaoError } = require("../../utils/daoError");
 const getInsertedRowId = rows => prop('last_insert_rowid()', head(rows))
+
+
+
+const isNullOrEmpty = isNil || isEmpty;
 
 
 //creates a user and any attached user roles
@@ -64,6 +68,11 @@ module.exports.updateExperience = async (userId, experienceId, experience) => {
             `SELECT * FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId]
         );
 
+        //TODO move this above the update to check before update is attempted
+        if (isNullOrEmpty(experiences)) {
+            throw NotFountError("The experience does not exist");
+        } 
+
         await database.close();
 
         return Promise.resolve(head(experiences));
@@ -79,6 +88,11 @@ module.exports.getExperienceById = async (userId, experienceId, res) => {
         const experiences = await database.runQuery(
             `SELECT * FROM experiences WHERE id = ? and owner_id = ?;`, [experienceId, userId]
         )
+
+        if (isNullOrEmpty(experiences)) {
+            throw NotFountError("The experience does not exist");
+        } 
+
         await database.close();
         return Promise.resolve(head(experiences));
 
@@ -108,9 +122,9 @@ module.exports.removeExperience = async (userId, experienceId, res) => {
             `SELECT * FROM experiences WHERE id = ? and owner_id = ?;`, [experienceId, userId]
         );
 
-        // TODO add logic to check if exists and throw 404 if it doesnt 
-
-
+        if (isNullOrEmpty(experiences)) {
+            throw NotFountError("The experience does not exist");
+        } 
 
         await database
             .runQuery(`DELETE FROM experiences WHERE id = ? and owner_id = ?`, [experienceId, userId]);

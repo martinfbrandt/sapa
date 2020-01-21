@@ -8,13 +8,13 @@ const {
   deleteUser,
   postUserLogin,
   patchUser,
-  getUsers,
-  retrieveUser
+  retrieveUsers,
+  retrieveUserById
 } = require("./controllers/userController");
 const { authValidation, hasRole } = require("./controllers/middleware");
 const { validateExperience } = require('./validation/experiences');
 const { validateUserCreate, validateUserRoles, validateUserUpdate } = require('./validation/users');
-
+const { processSignup } = require('./hooks/preRequest.js');
 const {
   postExperience,
   deleteExperience,
@@ -91,49 +91,17 @@ app.get("/api", (req, res) => res.send("Server is available"));
 //user services
 
 // signup API, unauthenticated
-app.post("/api/signup", validateUserCreate, async (req, res) => {
-  const userWithRole = assoc('roles', ["user"], req.body)
-  createUser(userWithRole, res);
-});
+app.post("/api/signup", validateUserCreate, processSignup, createUser);
 
-app.post("/api/users",
-  authValidation,
-  hasRole(["user-manager", "admin"]),
-  validateUserCreate,
-  validateUserRoles,
-  async (req, res) => createUser(req.body, res))
+app.post("/api/users", authValidation, hasRole(["user-manager", "admin"]), validateUserCreate, validateUserRoles, createUser);
 
-app.get(
-  "/api/users/:id",
-  authValidation,
-  hasRole(["user-manager", "admin"]),
-  (req, res) => {
-    retrieveUser(req.params.id, res);
-  }
-);
+app.get("/api/users/:id", authValidation, hasRole(["user-manager", "admin"]), retrieveUserById);
 
-app.get("/api/users", authValidation, hasRole(["user-manager", "admin"]), (req, res) => {
-  getUsers(res);
-});
+app.get("/api/users", authValidation, hasRole(["user-manager", "admin"]), retrieveUsers);
 
-app.patch(
-  "/api/users/:id",
-  authValidation,
-  hasRole(["user-manager", "admin"]),
-  validateUserUpdate,
-  (req, res) => {
-    patchUser(req.params.id, req.body, res);
-  }
-);
+app.patch("/api/users/:id", authValidation, hasRole(["user-manager", "admin"]), validateUserUpdate, patchUser);
 
-app.delete(
-  "/api/users/:id",
-  authValidation,
-  hasRole(["user-manager", "admin"]),
-  (req, res) => {
-    deleteUser(req.params.id, res);
-  }
-);
+app.delete("/api/users/:id", authValidation, hasRole(["user-manager", "admin"]), deleteUser);
 
 //experience services
 app.post("/api/experiences", authValidation, hasRole(["user", "admin"]), validateExperience, postExperience);
@@ -159,7 +127,7 @@ app.get("/api/wishlists", authValidation, hasRole(["user", "admin"]) ? retrieveW
 app.get("/api/wishlists/:wishlistId", authValidation, retrieveWishlistById);
 
 // wishlist experience services
-app.post("/api/wishlists/:wishlistId/experiences/:experienceId",authValidation, postWishlistExperience);
+app.post("/api/wishlists/:wishlistId/experiences/:experienceId", authValidation, postWishlistExperience);
 
 app.get("/api/wishlists/:wishlistId/experiences", authValidation, retrieveAllWishlistExperiences)
 

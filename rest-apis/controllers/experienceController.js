@@ -1,5 +1,5 @@
 const { pathOr } = require("ramda");
-const { interpretError, checkIfExists } = require("../utils/daoError");
+const { interpretError } = require("../utils/daoError");
 const {
   createExperience,
   updateExperience,
@@ -37,7 +37,6 @@ module.exports.patchExperience = async function (req, res, next) {
     const experience = new Experience(req.body.location, req.body.description, req.body.name);
 
     const updatedExperience = await updateExperience(userId, experienceId, experience);
-    checkIfExists(updatedExperience, res);
 
     res.json(updatedExperience);
   }
@@ -53,7 +52,6 @@ module.exports.retrieveExperienceById = async function (req, res, next) {
     const { experienceId } = req.params;
 
     const experience = await getExperienceById(userId, experienceId);
-    checkIfExists(experience, res);
 
     res.json(experience);
 

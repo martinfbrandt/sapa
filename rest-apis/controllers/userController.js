@@ -7,7 +7,8 @@ const User = require('./../dao/domain-objects/user');
 const {
   createUser,
   getUserByEmail,
-  getRoles
+  getRoles,
+  updateUser,
 } = require('./../dao/controllers/userDao');
 
 
@@ -45,33 +46,37 @@ module.exports.retrieveRoles = async userId => {
 }
 
 //creates a user and any attached user roles
-module.exports.createUser = async (user, res) => {
+module.exports.createUser = async (req, res, next) => {
   try {
-    const user = new User(req.body.name, req.body.email);
+    const user = new User(req.body.name, req.body.email, req.body.password);
 
-    const userRoles = user.roles;
+    const userRoles = req.body.roles;
     //hash the password
-    const updatedUser = await hashPassword(user)
+    const updatedUser = await hashPassword(user);
 
-    createUser(user, updatedUser.password, userRoles)
+    res.json(await createUser(user, updatedUser.password, userRoles));
   }
   catch (err) {
 
   }
 };
 
-module.exports.patchUser = async (userId, user, res) => {
+module.exports.patchUser = async (req, res, next) => {
   try {
-  
+    const user = new User(req.body.name, req.body.email);
+    
+    const updatedUser = await updateUser(req.body.id, user);
+
+    res.json(updatedUser);
   }
   catch (err) {
-
+    interpretError(err, 'user', res);
   }
 };
 
 module.exports.retrieveUserById = (userId, res) => {
   try {
-
+    res.json();
   }
   catch (err) {
 
@@ -80,6 +85,7 @@ module.exports.retrieveUserById = (userId, res) => {
 
 module.exports.retrieveUsers = res => {
   try {
+    res.json();
 
   }
   catch (err) {
@@ -89,6 +95,7 @@ module.exports.retrieveUsers = res => {
 
 module.exports.deleteUser = async (userId, res) => {
   try {
+    res.json();
 
   }
   catch (err) {

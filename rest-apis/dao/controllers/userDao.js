@@ -84,7 +84,7 @@ module.exports.createUser = async (user, hashedPassword, userRoles) => {
     //close the database and return the user to the service
     await database.close()
 
-    return Promise.resolve(updatedUser)
+    return Promise.resolve(updatedUser);
 
   } catch (err) {
     interpretDaoError(err);
@@ -94,6 +94,18 @@ module.exports.createUser = async (user, hashedPassword, userRoles) => {
 module.exports.updateUser = async (userId, user) => {
   try {
     let database = new Database();
+
+    // fail fast, look for user first
+    const users = await database.runQuery(
+      `SELECT id, name, email FROM users WHERE id = ?`, [userId]
+    );
+    const updatedUser = head(users);
+
+    //check for 404
+    if(isNullOrEmpty(updatedUser)){
+      throw new NotFountError("The user does not exist")
+    }
+
 
     let updateItems = [];
 
@@ -119,16 +131,6 @@ module.exports.updateUser = async (userId, user) => {
 
     await database
       .runQuery(updateScript, params)
-
-    const users = await database.runQuery(
-      `SELECT id, name, email FROM users WHERE id = ?`, [userId]
-    );
-    const updatedUser = head(users);
-
-    //check for 404
-    if(isNullOrEmpty(updatedUser)){
-      throw new NotFountError("The user does not exist")
-    }
 
     const updatedRoles = await getRoles(userId, database);
 
