@@ -1,14 +1,16 @@
-const { Database } = require("../dao/Database");
 const { hashPassword, hasValidPassword } = require("../utils/passwords");
-const { head, __, assoc, dissoc } = require("ramda");
+const { assoc, dissoc } = require("ramda");
 const { createJwt } = require("../utils/auth");
-const { interpretError, checkIfExists } = require("../utils/daoError");
+const { interpretError } = require("../utils/daoError");
 const User = require('./../dao/domain-objects/user');
 const {
   createUser,
   getUserByEmail,
   getRoles,
   updateUser,
+  getUserById,
+  getUsers,
+  removeUser
 } = require('./../dao/controllers/userDao');
 
 
@@ -49,23 +51,23 @@ module.exports.retrieveRoles = async userId => {
 module.exports.createUser = async (req, res, next) => {
   try {
     const user = new User(req.body.name, req.body.email, req.body.password);
-
     const userRoles = req.body.roles;
     //hash the password
     const updatedUser = await hashPassword(user);
 
-    res.json(await createUser(user, updatedUser.password, userRoles));
+    const createdUser = await createUser(user, updatedUser.password, userRoles)
+    res.json(createdUser);
   }
   catch (err) {
-
+    interpretError(err, 'user', res);
   }
 };
 
 module.exports.patchUser = async (req, res, next) => {
   try {
     const user = new User(req.body.name, req.body.email);
-    
-    const updatedUser = await updateUser(req.body.id, user);
+
+    const updatedUser = await updateUser(req.params.id, user);
 
     res.json(updatedUser);
   }
@@ -74,31 +76,37 @@ module.exports.patchUser = async (req, res, next) => {
   }
 };
 
-module.exports.retrieveUserById = (userId, res) => {
+module.exports.retrieveUserById = async (req, res, next) => {
   try {
-    res.json();
+    const user = await retrieveUserById(req.params.id);
+
+    res.json(user);
   }
   catch (err) {
-
+    interpretError(err, 'user', res);
   }
 };
 
-module.exports.retrieveUsers = res => {
+module.exports.retrieveUsers = async (req, res, next) => {
   try {
-    res.json();
+    const users = await getUsers();
+    res.json(users);
 
   }
   catch (err) {
-
+    interpretError(err, 'user', res);
   }
 };
 
-module.exports.deleteUser = async (userId, res) => {
+module.exports.deleteUser = async (req, res, next) => {
   try {
-    res.json();
+
+    await removeUser(req.params.id);
+
+    res.status(200).send();
 
   }
   catch (err) {
-
+    interpretError(err, 'user', res);
   }
 };

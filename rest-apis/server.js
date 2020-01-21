@@ -14,7 +14,7 @@ const {
 const { authValidation, hasRole } = require("./controllers/middleware");
 const { validateExperience } = require('./validation/experiences');
 const { validateUserCreate, validateUserRoles, validateUserUpdate } = require('./validation/users');
-const { processSignup } = require('./hooks/preRequest.js');
+const { processSignup } = require('./hooks/preRequest');
 const {
   postExperience,
   deleteExperience,

@@ -39,7 +39,7 @@ const updateRoles = async (userId, roles, database) => {
 
     const newRoles = await getRoles(userId, database)
 
-    Promise.resolve(newRoles);
+    return Promise.resolve(newRoles);
 
   }
   catch (err) {
@@ -135,7 +135,7 @@ module.exports.updateUser = async (userId, user) => {
     const updatedRoles = await getRoles(userId, database);
 
     await database.close()
-    Promise.resolve(combineUserWithRoles(updatedUser, updatedRoles));
+    return Promise.resolve(combineUserWithRoles(updatedUser, updatedRoles));
 
   }
   catch (err) {
@@ -159,7 +159,7 @@ module.exports.getUserById = async (userId) => {
     const roles = await getRoles(user.id, database);
     await database.close();
 
-    Promise.resolve(combineUserWithRoles(user, roles));
+    return Promise.resolve(combineUserWithRoles(user, roles));
   }
   catch (err) {
     interpretDaoError(err);
@@ -180,7 +180,7 @@ module.exports.getUsers = async () => {
     }
 
     await database.close();
-    Promise.resolve(updatedUsers);
+    return Promise.resolve(updatedUsers);
 
   } catch (err) {
     interpretDaoError(err);
@@ -199,7 +199,7 @@ module.exports.removeUser = async (userId) => {
     await database.runQuery(`DELETE FROM users WHERE id = ?`, [userId])
     await database.close();
 
-    Promise.resolve();
+    return Promise.resolve();
 
   } catch (err) {
     interpretDaoError(err);
