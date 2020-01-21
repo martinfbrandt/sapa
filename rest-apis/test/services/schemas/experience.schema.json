@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "number"
+        },
+        "description": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "owner_id": {
+            "type": "number"
+        },
+        "created_dt": {
+            "type": "string"
+        }
+    }
+}

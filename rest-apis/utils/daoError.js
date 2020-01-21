@@ -11,10 +11,53 @@ module.exports.interpretError = (err, type, res) => {
   }
 };
 
-module.exports.checkIfExists = (result, response) => {
-  if (!result || isEmpty(result)) {
-    response
-      .status(404)
-      .send({ error: "The requested resource does not exist" });
+
+module.exports.interpretDaoError = (err) => {
+  const errno = err.errno;
+  if (errno == 19) {
+    return new DuplicateError(err);
+  } else if (errno == 1) {
+    return new BadRequestError(err)
+  } else {
+    return new BadRequestError(err);
   }
 };
+
+module.exports.checkIfExists = (result, response) => {
+  const exists = !result || isEmpty(result);
+
+  if (response) {
+    response
+      .status(404)
+    .send({ error: "The requested resource does not exist" });
+  } else {
+    throw exists;
+  }
+
+};
+
+
+class DaoError {
+  constructor(err) {
+    this.error = err;
+  }
+
+}
+
+class DuplicateError extends DaoError {
+  constructor(err) {
+    super(err);
+  }
+}
+
+class NotFountError extends DaoError {
+  constructor(err) {
+    super(err);
+  }
+}
+
+class BadRequestError extends DaoError {
+  constructor(err) {
+    super(err);
+  }
+}
